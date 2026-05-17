@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SETOR ROBÔ - RELATÓRIO OFICIAL</title>
+
+<style>
+
+:root{
+    --primary:#fbc02d;
+    --dark:#0d0d0d;
+    --card:#1b1b1b;
+    --success:#2e7d32;
+    --danger:#c62828;
+    --blue:#0288d1;
+}
+
+body{
+    margin:0;
+    background:#000;
+    font-family:'Segoe UI',sans-serif;
+    color:white;
+}
+
+@keyframes flutuar{
+    0%{transform:translate(5vw,10vh) rotate(0deg);}
+    25%{transform:translate(70vw,20vh) rotate(10deg);}
+    50%{transform:translate(60vw,70vh) rotate(0deg);}
+    75%{transform:translate(10vw,60vh) rotate(-10deg);}
+    100%{transform:translate(5vw,10vh) rotate(0deg);}
+}
+
+.marca-dagua-viva{
+    position:fixed;
+    top:0;
+    left:0;
+    font-size:45px;
+    font-weight:900;
+    color:rgba(255,152,0,.15);
+    pointer-events:none;
+    z-index:9999;
+    animation:flutuar 40s linear infinite;
+    user-select:none;
+}
+
+.topo{
+    text-align:center;
+    padding:20px 10px;
+}
+
+.topo h1{
+    margin:0;
+    color:var(--primary);
+    font-size:46px;
+    text-transform:uppercase;
+}
+
+.topo p{
+    margin:5px 0 0 0;
+    color:#fbc02d;
+    font-weight:bold;
+}
+
+.nav{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.btn-nav{
+    padding:10px 18px;
+    border:none;
+    border-radius:6px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    text-decoration:none;
+    font-size:12px;
+    text-transform:uppercase;
+}
+
+.container{
+    max-width:1150px;
+    margin:20px auto;
+    padding:0 10px;
+}
+
+.card{
+    background:#e0e0e0;
+    border-radius:14px;
+    padding:20px;
+}
+
+.btn-erro{
+    width:100%;
+    background:var(--danger);
+    color:white;
+    border:none;
+    padding:15px;
+    border-radius:6px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+.grid-filtros{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+}
+
+label{
+    display:block;
+    font-size:11px;
+    color:#555;
+    font-weight:bold;
+    margin-bottom:5px;
+    text-transform:uppercase;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border-radius:6px;
+    border:1px solid #bbb;
+    box-sizing:border-box;
+}
+
+.btn-limpar{
+    margin-top:15px;
+    width:100%;
+    background:#6c757d;
+    color:white;
+    border:none;
+    padding:12px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.card-total{
+    margin-top:20px;
+    background:#111;
+    border:1px solid #333;
+    border-radius:12px;
+    padding:25px;
+    text-align:center;
+}
+
+.card-total h2{
+    margin:0;
+    color:#aaa;
+    font-size:14px;
+    text-transform:uppercase;
+}
+
+.card-total span{
+    font-size:46px;
+    color:var(--primary);
+    font-weight:bold;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    background:#e0e0e0;
+    overflow:hidden;
+    border-radius:10px;
+}
+
+th{
+    background:#222;
+    color:var(--primary);
+    padding:14px;
+    font-size:12px;
+    text-transform:uppercase;
+}
+
+td{
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #ccc;
+    color:#111;
+    font-size:13px;
+}
+
+.status-ok{
+    background:#d4edda;
+    color:#155724;
+    padding:6px 10px;
+    border-radius:5px;
+    font-weight:bold;
+    font-size:11px;
+}
+
+.status-erro{
+    background:#f8d7da;
+    color:#721c24;
+    padding:6px 10px;
+    border-radius:5px;
+    font-weight:bold;
+    font-size:11px;
+}
+
+@media(max-width:900px){
+
+    .grid-filtros{
+        grid-template-columns:1fr;
+    }
+
+    table{
+        font-size:11px;
+    }
+}
+
+/* ========================= */
+/* IMPRESSÃO */
+/* ========================= */
+
+@media print{
+
+    @page{
+        size: portrait;
+        margin: 8mm;
+    }
+
+    body{
+        background:#fff !important;
+        color:#000 !important;
+    }
+
+    .marca-dagua-viva{
+        animation:none !important;
+        top:50% !important;
+        left:50% !important;
+        transform:translate(-50%,-50%) rotate(-30deg) !important;
+        color:rgba(0,0,0,.05) !important;
+        font-size:70px !important;
+    }
+
+    .nav,
+    .btn-erro,
+    .btn-limpar,
+    .grid-filtros{
+        display:none !important;
+    }
+
+    .container{
+        max-width:100% !important;
+        margin:0 !important;
+        padding:0 !important;
+    }
+
+    .card{
+        background:#fff !important;
+        border:none !important;
+        box-shadow:none !important;
+        padding:0 !important;
+    }
+
+    .card-total{
+        background:#fff !important;
+        border:1px solid #999 !important;
+        color:#000 !important;
+        margin-top:10px !important;
+    }
+
+    .card-total h2{
+        color:#000 !important;
+    }
+
+    .card-total span{
+        color:#000 !important;
+    }
+
+    .topo{
+        border-top:2px solid #999;
+        border-bottom:2px solid #999;
+        margin-bottom:5px;
+        padding:18px 10px;
+    }
+
+    .topo h1{
+        color:#b8860b !important;
+        text-shadow:none !important;
+        font-size:30px !important;
+    }
+
+    .topo p{
+        color:#b8860b !important;
+        font-size:10px !important;
+    }
+
+    table{
+        background:#fff !important;
+        margin-top:5px !important;
+        border-radius:0 !important;
+    }
+
+    th{
+        background:#fff !important;
+        color:#b8860b !important;
+        border-bottom:1px solid #999 !important;
+        font-size:9px !important;
+        padding:8px !important;
+    }
+
+    td{
+        color:#000 !important;
+        border-bottom:1px solid #ccc !important;
+        font-size:9px !important;
+        padding:8px !important;
+    }
+
+    .status-ok,
+    .status-erro{
+        background:none !important;
+        color:#000 !important;
+        border:none !important;
+        padding:0 !important;
+        font-size:9px !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="marca-dagua-viva">
+    D.artcom--Daniel
+</div>
+
+<div class="topo">
+
+    <h1>SETOR ROBÔ</h1>
+
+    <p>
+        RELATÓRIO DE PRODUÇÃO OFICIAL SINCRONIZADO
+    </p>
+
+    <div class="nav">
+
+        <a href="../index.html"
+           class="btn-nav"
+           style="background:var(--blue);">
+            🏠 Início
+        </a>
+
+        <a href="cadastro.html"
+           class="btn-nav"
+           style="background:#9c27b0;">
+            📝 Cadastro
+        </a>
+
+        <a href="entrada.html"
+           class="btn-nav"
+           style="background:var(--success);">
+            📥 Entrada
+        </a>
+
+        <a href="saida.html"
+           class="btn-nav"
+           style="background:var(--danger);">
+            📤 Saída
+        </a>
+
+        <a href="geral.html"
+           class="btn-nav"
+           style="background:var(--primary); color:#000;">
+            📊 Relatório Geral
+        </a>
+
+        <a href="resumo.html"
+           class="btn-nav"
+           style="background:#111; border:1px solid var(--primary); color:var(--primary);">
+            📊 Resumo do Relatório
+        </a>
+
+        <button
+            onclick="atualizarRelatorio()"
+            class="btn-nav"
+            style="background:var(--success);"
+        >
+            🔄 Atualizar
+        </button>
+
+        <button
+            onclick="window.print()"
+            class="btn-nav"
+            style="background:var(--blue);"
+        >
+            🖨️ Imprimir PDF
+        </button>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <button
+            id="btnFiltroErro"
+            class="btn-erro"
+            onclick="toggleProblemas()"
+        >
+            ⚠️ VER APENAS PROBLEMAS / OCORRÊNCIAS
+        </button>
+
+        <div class="grid-filtros">
+
+            <div class="campo-busca">
+                <label>CÓD / PROJETO</label>
+
+                <input
+                    type="text"
+                    id="f-cod"
+                    placeholder="Buscar..."
+                    oninput="carregarRelatorio()"
+                >
+            </div>
+
+            <div class="campo-busca">
+                <label>MEDIDA / PRODUTO</label>
+
+                <input
+                    type="text"
+                    id="f-prod"
+                    placeholder="Buscar..."
+                    oninput="carregarRelatorio()"
+                >
+            </div>
+
+            <div class="campo-busca">
+                <label>CLIENTE</label>
+
+                <input
+                    type="text"
+                    id="f-cliente"
+                    placeholder="Buscar..."
+                    oninput="carregarRelatorio()"
+                >
+            </div>
+
+            <div class="campo-busca">
+                <label>DATA</label>
+
+                <input
+                    type="date"
+                    id="f-data"
+                    onchange="carregarRelatorio()"
+                >
+            </div>
+
+            <div class="campo-busca">
+                <label>OCORRÊNCIA (TEXTO)</label>
+
+                <input
+                    type="text"
+                    id="f-ocorr"
+                    placeholder="Buscar erro..."
+                    oninput="carregarRelatorio()"
+                >
+            </div>
+
+        </div>
+
+        <button
+            onclick="limparFiltros()"
+            class="btn-limpar"
+        >
+            LIMPAR TODOS OS FILTROS
+        </button>
+
+    </div>
+
+    <div class="card-total">
+
+        <h2>
+            QUANTIDADE TOTAL FILTRADA
+        </h2>
+
+        <span id="totalPecas">0</span>
+        <small>unidades</small>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>DATA</th>
+                <th>CÓD</th>
+                <th>CLIENTE / PROJETO</th>
+                <th>PRODUTO / MEDIDA</th>
+                <th>QTD</th>
+                <th>STATUS / OCORRÊNCIA</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="corpoRelatorio"></tbody>
+
+    </table>
+
+</div>
+
+<script>
+
+const API_HIST = "/api/historicoEntrada";
+const API_PROD = "/api/produtos";
+
+let apenasErros = false;
+let cacheHistorico = [];
+let cacheProdutos = [];
+
+window.onload = () => carregarRelatorio();
+
+async function buscarAPI(url){
+
+    try{
+
+        const resp = await fetch(url);
+
+        if(!resp.ok){
+            throw new Error("Erro ao buscar " + url);
+        }
+
+        const dados = await resp.json();
+
+        return Array.isArray(dados) ? dados : [];
+
+    }catch(erro){
+
+        console.error(erro);
+
+        alert("❌ Não consegui carregar os dados do servidor. Verifique se o Node está aberto.");
+
+        return [];
+    }
+}
+
+async function carregarBaseServidor(){
+
+    const [hist, produtos] = await Promise.all([
+        buscarAPI(API_HIST),
+        buscarAPI(API_PROD)
+    ]);
+
+    cacheHistorico = hist;
+    cacheProdutos = produtos;
+}
+
+async function atualizarRelatorio() {
+
+    await carregarRelatorio(true);
+
+    alert("✅ Relatório atualizado!");
+}
+
+function toggleProblemas() {
+
+    apenasErros = !apenasErros;
+
+    const btn =
+        document.getElementById('btnFiltroErro');
+
+    btn.style.background =
+        apenasErros
+        ? "#000"
+        : "var(--danger)";
+
+    btn.innerText =
+        apenasErros
+
+        ? "🔍 MOSTRAR TODOS OS REGISTROS"
+
+        : "⚠️ VER APENAS PROBLEMAS / OCORRÊNCIAS";
+
+    carregarRelatorio(false);
+}
+
+function normalizarData(data){
+
+    if(!data) return "";
+
+    const str = String(data);
+
+    if(str.includes("-")){
+        return str.split("T")[0].split("-").reverse().join("/");
+    }
+
+    return str;
+}
+
+async function carregarRelatorio(forcarServidor = false) {
+
+    if(forcarServidor || cacheHistorico.length === 0 && cacheProdutos.length === 0){
+        await carregarBaseServidor();
+    }
+
+    const hist = cacheHistorico || [];
+    const produtos = cacheProdutos || [];
+
+    const fCod =
+        document.getElementById('f-cod')
+        .value
+        .toLowerCase();
+
+    const fProd =
+        document.getElementById('f-prod')
+        .value
+        .toLowerCase();
+
+    const fCli =
+        document.getElementById('f-cliente')
+        .value
+        .toLowerCase();
+
+    const fData =
+        document.getElementById('f-data')
+        .value;
+
+    const fOcorr =
+        document.getElementById('f-ocorr')
+        .value
+        .toLowerCase();
+
+    const corpo =
+        document.getElementById('corpoRelatorio');
+
+    corpo.innerHTML = "";
+
+    let total = 0;
+
+    [...hist]
+    .reverse()
+    .forEach(reg => {
+
+        const info =
+
+            produtos.find(
+                p => String(p.id) == String(reg.produtoID)
+            )
+
+            ||
+
+            produtos.find(
+                p => String(p.id) == String(reg.id_vinculo)
+            )
+
+            ||
+
+            produtos.find(
+                p => String(p.codigo || p.cod || "") == String(reg.codigo || reg.cod || "")
+            )
+
+            ||
+
+            {
+                codigo: reg.codigo || reg.cod || "---",
+                projeto: reg.projeto || "-",
+                cliente: reg.cliente || "-",
+                produto: reg.produto || "-",
+                medida: reg.medida || "-"
+            };
+
+        const dataFormatada =
+            fData
+            ? fData.split('-').reverse().join('/')
+            : "";
+
+        const dataRegistro =
+            normalizarData(reg.data);
+
+        const codigoInfo = info.codigo || info.cod || "";
+        const projetoInfo = info.projeto || info.proj || "";
+        const clienteInfo = info.cliente || info.nome || "";
+        const produtoInfo = info.produto || "";
+        const medidaInfo = info.medida || "";
+
+        const bateCod =
+            !fCod ||
+            String(codigoInfo || "").toLowerCase().includes(fCod) ||
+            String(projetoInfo || "").toLowerCase().includes(fCod);
+
+        const bateProd =
+            !fProd ||
+            String(produtoInfo || "").toLowerCase().includes(fProd) ||
+            String(medidaInfo || "").toLowerCase().includes(fProd);
+
+        const bateCli =
+            !fCli ||
+            String(clienteInfo || "").toLowerCase().includes(fCli);
+
+        const bateData =
+            !fData ||
+            dataRegistro === dataFormatada;
+
+        const bateOcorr =
+            !fOcorr ||
+            String(reg.ocorrencia || "").toLowerCase().includes(fOcorr);
+
+        const temErro =
+            reg.ocorrencia &&
+            String(reg.ocorrencia).trim() !== "";
+
+        const mostrarSeForProblema =
+            !apenasErros ||
+            temErro;
+
+        if (
+            bateCod &&
+            bateProd &&
+            bateCli &&
+            bateData &&
+            bateOcorr &&
+            mostrarSeForProblema
+        ) {
+
+            total += Number(reg.qtd || 0);
+
+            const tr =
+                document.createElement('tr');
+
+            tr.innerHTML = `
+
+                <td>${dataRegistro || "-"}</td>
+
+                <td style="
+                    font-weight:bold;
+                    color:var(--blue)
+                ">
+                    ${codigoInfo || "-"}
+                </td>
+
+                <td>
+
+                    <div style="font-weight:bold">
+                        ${clienteInfo || "-"}
+                    </div>
+
+                    <div style="
+                        font-size:10px;
+                        color:#777
+                    ">
+                        ${projetoInfo || "-"}
+                    </div>
+
+                </td>
+
+                <td>
+
+                    <div>
+                        ${produtoInfo || "-"}
+                    </div>
+
+                    <div style="
+                        font-size:10px;
+                        color:#777
+                    ">
+                        ${medidaInfo || "-"}
+                    </div>
+
+                </td>
+
+                <td style="
+                    font-weight:bold;
+                    font-size:15px;
+                ">
+                    ${reg.qtd || 0}
+                </td>
+
+                <td>
+
+                    <span class="${
+                        temErro
+                        ? 'status-erro'
+                        : 'status-ok'
+                    }">
+
+                        ${
+                            temErro
+                            ? reg.ocorrencia
+                            : 'OK'
+                        }
+
+                    </span>
+
+                </td>
+            `;
+
+            corpo.appendChild(tr);
+        }
+    });
+
+    document.getElementById('totalPecas').innerText =
+        total;
+}
+
+function limparFiltros() {
+
+    document
+        .querySelectorAll('.campo-busca input')
+        .forEach(i => i.value = "");
+
+    apenasErros = false;
+
+    const btn =
+        document.getElementById('btnFiltroErro');
+
+    btn.style.background =
+        "var(--danger)";
+
+    btn.innerText =
+        "⚠️ VER APENAS PROBLEMAS / OCORRÊNCIAS";
+
+    carregarRelatorio(false);
+}
+
+</script>
+
+</body>
+</html>

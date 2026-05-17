@@ -1,0 +1,771 @@
+
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISTEMA ROBÔ - ENTRADA OFICIAL</title>
+
+<style>
+:root{
+    --primary:#fbc02d;
+    --dark-bg:#0d0d0d;
+    --card-bg:#1a1a1a;
+    --blue:#0288d1;
+    --danger:#d32f2f;
+    --success:#2e7d32;
+    --input-bg:#262626;
+}
+
+body{font-family:'Segoe UI',sans-serif;background:var(--dark-bg);color:white;margin:0;}
+
+@keyframes flutuar{
+    0%{transform:translate(5vw,10vh) rotate(0deg);}
+    25%{transform:translate(70vw,20vh) rotate(10deg);}
+    50%{transform:translate(60vw,70vh) rotate(0deg);}
+    75%{transform:translate(10vw,60vh) rotate(-10deg);}
+    100%{transform:translate(5vw,10vh) rotate(0deg);}
+}
+
+.marca-dagua-viva{
+    position:fixed;top:0;left:0;font-size:45px;font-weight:900;
+    color:rgba(255,152,0,.15);pointer-events:none;z-index:9999;
+    animation:flutuar 40s linear infinite;user-select:none;
+}
+
+.nav-topo{background:#111;padding:12px;display:flex;justify-content:center;gap:10px;border-bottom:2px solid var(--primary);}
+.nav-topo a{padding:8px 16px;border-radius:6px;text-decoration:none;color:white;font-weight:bold;font-size:11px;text-transform:uppercase;}
+
+.card{max-width:1100px;margin:25px auto;background:var(--card-bg);padding:25px;border-radius:12px;border:1px solid #333;}
+.header-setor{text-align:center;color:var(--primary);text-transform:uppercase;margin-bottom:20px;}
+.search-section{border:1px solid var(--primary);border-radius:8px;padding:20px;margin-bottom:20px;}
+
+label{display:block;font-size:11px;text-transform:uppercase;color:#999;font-weight:bold;margin-bottom:6px;}
+
+input,select{
+    width:100%;padding:12px;background:var(--input-bg);border:1px solid #444;
+    color:white;border-radius:6px;outline:none;box-sizing:border-box;
+}
+
+.progress-container{width:100%;background:#333;height:35px;border-radius:8px;margin:15px 0;overflow:hidden;}
+.progress-bar{height:100%;width:0%;background:var(--success);transition:width .5s;display:flex;align-items:center;justify-content:center;font-weight:bold;}
+
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.status-box{padding:18px;border-radius:6px;text-align:center;font-weight:bold;color:white;}
+.bg-meta{background:#455a64;}
+.bg-total{background:var(--blue);}
+.bg-falta{background:var(--danger);}
+.bg-pct{background:var(--success);}
+.status-box span{display:block;font-size:24px;margin-top:5px;}
+
+.btn-principal{
+    width:100%;padding:18px;background:var(--success);color:white;border:none;
+    border-radius:8px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:15px;
+}
+
+table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px;}
+th{background:#111;color:var(--primary);padding:12px;border-bottom:1px solid #333;}
+td{padding:15px;text-align:center;border-bottom:1px solid #222;}
+
+.badge-ok{background:#2e7d32;color:white;padding:6px 12px;border-radius:6px;font-size:10px;font-weight:bold;}
+.badge-pendente{background:#fbc02d;color:black;padding:6px 12px;border-radius:6px;font-size:10px;font-weight:bold;}
+
+.btn-reg-ocorr{background:#fbc02d;color:black;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:bold;}
+.btn-ver-ocorr{background:#d32f2f;color:white;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:bold;}
+
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center;}
+.modal-content{background:#1a1a1a;padding:25px;border-radius:12px;width:90%;max-width:400px;border:2px solid var(--primary);}
+textarea{width:100%;background:#2b0f0f;color:white;border:1px solid #d32f2f;padding:10px;border-radius:6px;margin-top:10px;box-sizing:border-box;}
+
+.modal{z-index:10000;}
+
+.modal-content.modal-relatar{
+    background:#1a1a1a;
+    border:2px solid var(--primary);
+}
+
+.modal-content.modal-relatar textarea{
+    background:var(--input-bg);
+    border:1px solid #555;
+    color:white;
+}
+
+.modal-content.modal-ver{
+    background:#1a1a1a;
+    border:2px solid var(--danger);
+}
+
+.modal-content.modal-ver h3{
+    color:#ff3333;
+    text-align:center;
+}
+
+.modal-content.modal-ver textarea{
+    background:#262626;
+    border:1px solid #ff3333;
+    color:white;
+    resize:none;
+}
+
+.resumo-movimento{
+    max-width:360px;
+    margin:12px auto 8px auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    border:1px solid #333;
+    background:#111;
+}
+
+.resumo-movimento div{
+    padding:12px;
+    text-align:center;
+    font-weight:bold;
+    border:1px solid #333;
+}
+
+.resumo-titulo{font-size:12px;}
+.resumo-entrada{color:var(--blue);}
+.resumo-saida{color:var(--danger);}
+.resumo-saldo{color:var(--primary);}
+</style>
+</head>
+
+<body>
+
+<div class="marca-dagua-viva">D.artcom--Daniel</div>
+
+<nav class="nav-topo">
+    <a href="../index.html" style="background:var(--blue);">🏠 Início</a>
+    <a href="cadastro.html" style="background:#6f42c1;">📝 Cadastro</a>
+    <a href="saida.html" style="background:var(--danger);">📤 Saída</a>
+    <a href="geral.html" style="background:var(--primary); color:#000;">📊 Relatório Geral</a>
+</nav>
+
+<div class="card">
+
+    <h2 class="header-setor">SETOR ROBÔ - ENTRADA</h2>
+
+    <div class="search-section">
+        <div style="display:flex; gap:10px;">
+            <div style="width:200px;">
+                <label>📅 DATA OP.</label>
+                <input type="date" id="dataOp">
+            </div>
+
+            <div style="flex:1; position:relative;">
+                <label>🔍 BUSCA INTELIGENTE</label>
+
+                <input type="text" id="filtroSelect" placeholder="Digite para buscar..." oninput="buscaSequencial()" style="padding-right:45px;">
+
+                <button onclick="limparBusca()" style="position:absolute;right:10px;top:32px;background:none;border:none;color:var(--primary);cursor:pointer;font-size:18px;">
+                    🧹
+                </button>
+            </div>
+        </div>
+
+        <label style="margin-top:15px;">ITEM SELECIONADO</label>
+
+        <div style="position:relative;">
+            <select id="selectItem" onchange="atualizarCards(); atualizarResumoEntrada();" style="padding-right:50px;">
+                <option value="">Selecione...</option>
+            </select>
+
+            <button onclick="limparItemSelecionado()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--primary);cursor:pointer;font-size:18px;">
+                🧹
+            </button>
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <div id="barraProgresso" class="progress-bar">0%</div>
+    </div>
+
+    <div class="status-grid">
+        <div class="status-box bg-meta">META <span id="s-meta">0</span></div>
+        <div class="status-box bg-total">PRODUZIDO <span id="s-total">0</span></div>
+        <div class="status-box bg-falta">FALTA <span id="s-falta">0</span></div>
+        <div class="status-box bg-pct">STATUS <span id="s-pct">0%</span></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+        <div>
+            <label>🎯 META</label>
+            <input type="number" id="inputMeta" value="0">
+        </div>
+
+        <div>
+            <label>🏗️ QTD</label>
+            <input type="number" id="inputQtd" placeholder="0">
+        </div>
+    </div>
+
+    <button class="btn-principal" onclick="registrar()">🚀 REGISTRAR PRODUÇÃO</button>
+
+</div>
+
+<div style="max-width:1200px; margin:auto; padding:20px;">
+
+    <div style="position:relative; margin-bottom:15px;">
+
+        <input
+            type="text"
+            id="filtroTabela"
+            placeholder="🔍 Filtrar histórico da tabela..."
+            onkeyup="filtrarTabela()"
+            style="width:100%;padding:12px;background:#111;border:1px solid #333;color:#999;border-radius:6px;border-left:4px solid var(--primary);padding-right:45px;"
+        >
+
+        <button
+            onclick="limparFiltroTabela()"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--primary);cursor:pointer;font-size:18px;"
+        >
+            🧹
+        </button>
+
+    </div>
+
+    <div class="resumo-movimento">
+        <div class="resumo-titulo resumo-entrada">ENTRADA</div>
+        <div class="resumo-titulo resumo-saida">SAÍDA</div>
+        <div class="resumo-titulo resumo-saldo">SALDO</div>
+
+        <div class="resumo-entrada" id="resEntrada">0</div>
+        <div class="resumo-saida" id="resSaida">0</div>
+        <div class="resumo-saldo" id="resSaldo">0</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ÍNDICE</th>
+                <th>DATA</th>
+                <th>CÓD</th>
+                <th>CLIENTE / PROJETO</th>
+                <th>PRODUTO / MEDIDA</th>
+                <th style="color:var(--blue)">ENTRADA</th>
+                <th style="color:var(--danger)">SAÍDA</th>
+                <th style="color:var(--primary)">SALDO</th>
+                <th>STATUS</th>
+                <th>OCORRÊNCIA</th>
+                <th>AÇÕES</th>
+            </tr>
+        </thead>
+
+        <tbody id="corpoTabela"></tbody>
+    </table>
+</div>
+
+<div id="modalOcorr" class="modal">
+    <div class="modal-content modal-relatar">
+        <h3 style="color:var(--primary); text-align:center;">⚠️ RELATAR OCORRÊNCIA</h3>
+        <input type="hidden" id="idReg">
+        <textarea id="txtOcorr" rows="5" placeholder="Descreva o problema..."></textarea>
+
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button onclick="salvarOcorrencia()" class="btn-principal" style="margin-top:0;">SALVAR</button>
+            <button onclick="fecharModal()" class="btn-principal" style="margin-top:0; background:#555;">FECHAR</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="modalOcorrAnotada" class="modal">
+    <div class="modal-content modal-ver">
+        <h3>🚨 OCORRÊNCIA ANOTADA</h3>
+        <textarea id="txtOcorrAnotada" rows="5" readonly></textarea>
+
+        <button onclick="fecharModalAnotada()" class="btn-principal" style="background:#555;">
+            FECHAR
+        </button>
+    </div>
+</div>
+
+<script>
+const API_PROD = "/api/produtos";
+const API_HIST = "/api/historicoEntrada";
+const API_SAI  = "/api/historicoSaida";
+const API_META = "/api/metasEntrada";
+
+let produtos = [];
+let historico = [];
+let saidas = [];
+let metasEntrada = {};
+
+const selectItem = document.getElementById("selectItem");
+
+document.getElementById("dataOp").valueAsDate = new Date();
+
+async function carregarJSON(api, padrao){
+    try{
+        const resposta = await fetch(api);
+        if(!resposta.ok) throw new Error("Erro ao carregar " + api);
+        const dados = await resposta.json();
+        return (dados === null || dados === undefined) ? padrao : dados;
+    }catch(erro){
+        console.error(erro);
+        alert("⚠️ Não foi possível carregar o banco de dados. Verifique se o servidor está ligado.");
+        return padrao;
+    }
+}
+
+async function salvarJSON(api, dados){
+    try{
+        const resposta = await fetch(api,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(dados)
+        });
+        if(!resposta.ok) throw new Error("Erro ao salvar " + api);
+        return true;
+    }catch(erro){
+        console.error(erro);
+        alert("⚠️ Não foi possível salvar no banco de dados. Verifique se o servidor está ligado.");
+        return false;
+    }
+}
+
+async function carregarBanco(){
+    produtos = await carregarJSON(API_PROD, []);
+    historico = await carregarJSON(API_HIST, []);
+    saidas = await carregarJSON(API_SAI, []);
+    metasEntrada = await carregarJSON(API_META, {});
+    if(Array.isArray(metasEntrada)) metasEntrada = {};
+}
+
+function textoCompletoCadastro(p){
+    const camposPrincipais = [
+        p.codigo || p.cod,
+        p.cliente || p.nome,
+        p.projeto || p.proj,
+        p.produto,
+        p.medida
+    ];
+
+    const camposExtras = Object.keys(p)
+        .filter(chave => !["id","codigo","cod","cliente","nome","projeto","proj","produto","medida"].includes(chave))
+        .map(chave => p[chave])
+        .filter(valor => valor !== undefined && valor !== null && String(valor).trim() !== "");
+
+    return [...camposPrincipais, ...camposExtras]
+        .filter(valor => valor !== undefined && valor !== null && String(valor).trim() !== "")
+        .map(valor => String(valor).trim())
+        .join(" | ");
+}
+
+async function carregarSelect(){
+    await carregarBanco();
+    selectItem.innerHTML = '<option value="">Selecione...</option>';
+
+    produtos.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+
+        // Mostra e permite buscar todas as informações existentes no cadastro.
+        opt.textContent = textoCompletoCadastro(p);
+
+        selectItem.appendChild(opt);
+    });
+}
+
+function pegarItemSelecionado(){
+    return produtos.find(p => String(p.id) === String(selectItem.value));
+}
+
+async function buscaSequencial(){
+    const termoOriginal = document.getElementById("filtroSelect").value.trim();
+    const termo = termoOriginal.toLowerCase();
+
+    if(termo === ""){
+        selectItem.selectedIndex = 0;
+        await atualizarCards();
+        await atualizarResumoEntrada();
+        return;
+    }
+
+    const opcoes = [];
+
+    for(let i = 1; i < selectItem.options.length; i++){
+        const opt = selectItem.options[i];
+        const item = produtos.find(p => String(p.id) === String(opt.value));
+
+        if(item){
+            opcoes.push({indice:i, item:item});
+        }
+    }
+
+    // 1) PRIORIDADE MÁXIMA: código começando exatamente com o texto digitado.
+    // Exemplo: digitou D, busca código D antes de qualquer Gabriel, Daniel, Medida etc.
+    let achado = opcoes.find(o =>
+        String(o.item.codigo || o.item.cod || "").toLowerCase().startsWith(termo)
+    );
+
+    // 2) Depois busca código contendo o texto digitado.
+    if(!achado){
+        achado = opcoes.find(o =>
+            String(o.item.codigo || o.item.cod || "").toLowerCase().includes(termo)
+        );
+    }
+
+    // 3) Depois busca projeto começando com o termo.
+    if(!achado){
+        achado = opcoes.find(o =>
+            String(o.item.projeto || o.item.proj || "").toLowerCase().startsWith(termo)
+        );
+    }
+
+    // 4) Depois busca cliente, produto, medida e demais campos.
+    if(!achado){
+        achado = opcoes.find(o =>
+            textoCompletoCadastro(o.item).toLowerCase().includes(termo)
+        );
+    }
+
+    if(achado){
+        selectItem.selectedIndex = achado.indice;
+        await atualizarCards();
+        await atualizarResumoEntrada();
+    }
+}
+
+async function limparBusca(){
+    document.getElementById("filtroSelect").value = "";
+    selectItem.selectedIndex = 0;
+    await atualizarCards();
+    await atualizarResumoEntrada();
+}
+
+async function limparItemSelecionado(){
+    selectItem.selectedIndex = 0;
+    document.getElementById("filtroSelect").value = "";
+    await atualizarCards();
+    await atualizarResumoEntrada();
+}
+
+function chaveProducao(id){
+    return "entrada_producao_" + id;
+}
+
+async function atualizarCards(){
+    await carregarBanco();
+    const item = pegarItemSelecionado();
+
+    if(!item){
+        document.getElementById("s-meta").innerText = 0;
+        document.getElementById("s-total").innerText = 0;
+        document.getElementById("s-falta").innerText = 0;
+        document.getElementById("s-pct").innerText = "0%";
+        document.getElementById("inputMeta").value = 0;
+        const barra = document.getElementById("barraProgresso");
+        barra.style.width = "0%";
+        barra.innerHTML = "0%";
+        return;
+    }
+
+    const chave = chaveProducao(item.id);
+    let salvo = metasEntrada[chave] || {produzido:0, meta:0};
+
+    let produzido = Number(salvo.produzido || 0);
+    let meta = Number(salvo.meta || 0);
+    let falta = meta - produzido;
+    if(falta < 0) falta = 0;
+
+    let pct = meta > 0 ? (produzido / meta) * 100 : 0;
+    if(pct > 100) pct = 100;
+
+    document.getElementById("s-meta").innerText = meta;
+    document.getElementById("s-total").innerText = produzido;
+    document.getElementById("s-falta").innerText = falta;
+    document.getElementById("s-pct").innerText = pct.toFixed(0) + "%";
+    document.getElementById("inputMeta").value = meta;
+
+    const barra = document.getElementById("barraProgresso");
+    barra.style.width = pct + "%";
+    barra.innerHTML = pct >= 100 ? "✔ META ATINGIDA" : pct.toFixed(0) + "%";
+}
+
+async function salvarMetaAtual(){
+    const item = pegarItemSelecionado();
+    if(!item) return;
+
+    await carregarBanco();
+    const chave = chaveProducao(item.id);
+    let salvo = metasEntrada[chave] || {produzido:0, meta:0};
+    salvo.meta = Number(document.getElementById("inputMeta").value);
+    metasEntrada[chave] = salvo;
+
+    const salvou = await salvarJSON(API_META, metasEntrada);
+    if(!salvou) return;
+
+    await atualizarCards();
+}
+
+document.getElementById("inputMeta").addEventListener("input", salvarMetaAtual);
+
+async function registrar(){
+    await carregarBanco();
+    const item = pegarItemSelecionado();
+
+    if(!item){
+        alert("Selecione item.");
+        return;
+    }
+
+    const qtd = Number(document.getElementById("inputQtd").value);
+    if(!qtd || qtd <= 0){
+        alert("Digite quantidade válida.");
+        return;
+    }
+
+    const chave = chaveProducao(item.id);
+    let salvo = metasEntrada[chave] || {produzido:0, meta:Number(document.getElementById("inputMeta").value || 0)};
+    salvo.produzido += qtd;
+    metasEntrada[chave] = salvo;
+
+    if(!await salvarJSON(API_META, metasEntrada)) return;
+
+    historico.push({
+        id:Date.now(),
+        produtoID:item.id,
+        data:document.getElementById("dataOp").value,
+        codigo:item.codigo,
+        cliente:item.cliente,
+        projeto:item.projeto,
+        produto:item.produto,
+        medida:item.medida,
+        qtd:qtd,
+        ocorrencia:""
+    });
+
+    if(!await salvarJSON(API_HIST, historico)) return;
+
+    document.getElementById("inputQtd").value = "";
+
+    await atualizarCards();
+    await carregarTabela();
+    await atualizarResumoEntrada();
+}
+
+function formatarDataBR(data){
+    if(!data) return "-";
+    const partes = String(data).split("-");
+    if(partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    return data;
+}
+
+function valorSeguro(v){
+    return (v === undefined || v === null) ? "" : String(v).trim().toLowerCase();
+}
+
+function dadosItemPorRegistro(reg){
+    const itemAtual = produtos.find(p => String(p.id) === String(reg.produtoID || reg.id_vinculo || ""));
+    return {
+        id: itemAtual ? itemAtual.id : (reg.produtoID || reg.id_vinculo || ""),
+        codigo: itemAtual ? itemAtual.codigo : (reg.codigo || reg.cod),
+        cliente: itemAtual ? itemAtual.cliente : reg.cliente,
+        projeto: itemAtual ? itemAtual.projeto : reg.projeto,
+        produto: itemAtual ? itemAtual.produto : reg.produto,
+        medida: itemAtual ? itemAtual.medida : reg.medida
+    };
+}
+
+function chaveItemMovimento(reg){
+    const d = dadosItemPorRegistro(reg);
+    if(d.id !== undefined && d.id !== null && String(d.id).trim() !== ""){
+        return "ID::" + String(d.id);
+    }
+    return [
+        valorSeguro(d.codigo),
+        valorSeguro(d.cliente),
+        valorSeguro(d.projeto),
+        valorSeguro(d.produto),
+        valorSeguro(d.medida)
+    ].join("||");
+}
+
+function mesmoItemMovimento(a,b){
+    return chaveItemMovimento(a) === chaveItemMovimento(b);
+}
+
+async function carregarTabela(){
+    await carregarBanco();
+    const tbody = document.getElementById("corpoTabela");
+    tbody.innerHTML = "";
+
+    [...historico].reverse().forEach((reg, indice) => {
+        const dadosReg = dadosItemPorRegistro(reg);
+        const codigo = dadosReg.codigo;
+        const cliente = dadosReg.cliente;
+        const projeto = dadosReg.projeto;
+        const produto = dadosReg.produto;
+        const medida = dadosReg.medida;
+
+        const totalEntradaProduto = historico
+            .filter(h => mesmoItemMovimento(h, reg))
+            .reduce((total, h) => total + Number(h.qtd || 0), 0);
+
+        const totalSaidaProduto = saidas
+            .filter(s => mesmoItemMovimento(s, reg))
+            .reduce((total, s) => total + Number(s.qtd || s.quantidade || s.saida || 0), 0);
+
+        let saldoFinalProduto = totalEntradaProduto - totalSaidaProduto;
+        if(saldoFinalProduto < 0) saldoFinalProduto = 0;
+
+        const temOcorrencia = reg.ocorrencia && reg.ocorrencia.trim() !== "";
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td style="color:var(--primary); font-weight:bold;">${indice + 1}</td>
+            <td>${formatarDataBR(reg.data)}</td>
+            <td style="color:var(--primary); font-weight:bold;">${codigo || "-"}</td>
+            <td><b>${cliente || "-"}</b><br><small style="color:#777;">${projeto || "-"}</small></td>
+            <td><b>${produto || "-"}</b><br><small style="color:#777;">${medida || "-"}</small></td>
+            <td style="color:var(--blue); font-weight:bold;">${totalEntradaProduto}</td>
+            <td style="color:var(--danger); font-weight:bold;">${totalSaidaProduto}</td>
+            <td style="color:var(--primary); font-weight:bold;">${saldoFinalProduto}</td>
+            <td><span class="${temOcorrencia ? 'badge-pendente' : 'badge-ok'}">${temOcorrencia ? 'PENDENTE' : 'OK'}</span></td>
+            <td>
+                <button
+                    class="${temOcorrencia ? 'btn-ver-ocorr' : 'btn-reg-ocorr'}"
+                    onclick="${temOcorrencia ? `verOcorrencia(${reg.id})` : `abrirModal(${reg.id})`}"
+                >
+                    ${temOcorrencia ? 'VER' : 'REGISTRAR'}
+                </button>
+            </td>
+            <td>
+                <button onclick="excluirRegistro(${reg.id})" style="background:none; border:none; color:white; cursor:pointer; font-size:18px;">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function atualizarResumoEntrada(){
+    await carregarBanco();
+    const item = pegarItemSelecionado();
+
+    if(!item){
+        document.getElementById("resEntrada").innerText = 0;
+        document.getElementById("resSaida").innerText = 0;
+        document.getElementById("resSaldo").innerText = 0;
+        return;
+    }
+
+    const itemBase = {
+        produtoID:item.id,
+        codigo:item.codigo,
+        cliente:item.cliente,
+        projeto:item.projeto,
+        produto:item.produto,
+        medida:item.medida
+    };
+
+    const totalEntrada = historico
+        .filter(e => mesmoItemMovimento(e, itemBase))
+        .reduce((t, e) => t + Number(e.qtd || 0), 0);
+
+    const totalSaida = saidas
+        .filter(s => mesmoItemMovimento(s, itemBase))
+        .reduce((t, s) => t + Number(s.qtd || s.quantidade || s.saida || 0), 0);
+
+    let saldo = totalEntrada - totalSaida;
+    if(saldo < 0) saldo = 0;
+
+    document.getElementById("resEntrada").innerText = totalEntrada;
+    document.getElementById("resSaida").innerText = totalSaida;
+    document.getElementById("resSaldo").innerText = saldo;
+}
+
+function filtrarTabela(){
+    const termo = document.getElementById("filtroTabela").value.toLowerCase();
+    const linhas = document.querySelectorAll("#corpoTabela tr");
+    linhas.forEach(linha => {
+        linha.style.display = linha.innerText.toLowerCase().includes(termo) ? "" : "none";
+    });
+}
+
+function limparFiltroTabela(){
+    document.getElementById("filtroTabela").value = "";
+    filtrarTabela();
+}
+
+function abrirModal(id){
+    document.getElementById("idReg").value = id;
+    document.getElementById("txtOcorr").value = "";
+    document.getElementById("modalOcorr").style.display = "flex";
+}
+
+function fecharModal(){
+    document.getElementById("modalOcorr").style.display = "none";
+}
+
+async function salvarOcorrencia(){
+    const id = Number(document.getElementById("idReg").value);
+    const texto = document.getElementById("txtOcorr").value.trim();
+
+    await carregarBanco();
+
+    historico = historico.map(reg => {
+        if(Number(reg.id) === id) reg.ocorrencia = texto;
+        return reg;
+    });
+
+    if(!await salvarJSON(API_HIST, historico)) return;
+
+    fecharModal();
+    await carregarTabela();
+}
+
+async function verOcorrencia(id){
+    await carregarBanco();
+    const reg = historico.find(r => Number(r.id) === Number(id));
+    if(reg){
+        document.getElementById("txtOcorrAnotada").value = reg.ocorrencia || "Sem ocorrência.";
+        document.getElementById("modalOcorrAnotada").style.display = "flex";
+    }
+}
+
+function fecharModalAnotada(){
+    document.getElementById("modalOcorrAnotada").style.display = "none";
+}
+
+async function excluirRegistro(id){
+    if(!confirm("Deseja excluir este registro?")) return;
+
+    await carregarBanco();
+
+    const registroExcluido = historico.find(r => Number(r.id) === Number(id));
+    historico = historico.filter(reg => Number(reg.id) !== Number(id));
+
+    if(!await salvarJSON(API_HIST, historico)) return;
+
+    if(registroExcluido){
+        const chave = chaveProducao(registroExcluido.produtoID);
+        let salvo = metasEntrada[chave] || {produzido:0, meta:0};
+
+        salvo.produzido = Number(salvo.produzido || 0) - Number(registroExcluido.qtd || 0);
+        if(salvo.produzido < 0) salvo.produzido = 0;
+
+        metasEntrada[chave] = salvo;
+
+        if(!await salvarJSON(API_META, metasEntrada)) return;
+    }
+
+    await carregarSelect();
+    await carregarTabela();
+    await atualizarCards();
+    await atualizarResumoEntrada();
+}
+
+async function iniciarSistema(){
+    await carregarSelect();
+    await carregarTabela();
+    await atualizarResumoEntrada();
+}
+
+iniciarSistema();
+</script>
+</body>
+</html>

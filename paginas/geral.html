@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.ARTCOM - SETOR ROBÔ</title>
+
+
+
+<style>
+
+:root {
+    --primary: #fbc02d;
+    --dark-bg: #000;
+    --card-bg: #1a1a1a;
+    --danger: #ff5252;
+    --success: #4caf50;
+    --blue: #2196f3;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:var(--dark-bg);
+    color:#fff;
+    margin:0;
+    padding:0;
+    position:relative;
+}
+
+body::before{
+    content:"D.artcom--Daniel";
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(-30deg);
+    font-size:80px;
+    font-weight:900;
+    color:rgba(251,192,45,.07);
+    white-space:nowrap;
+    pointer-events:none;
+    z-index:-1;
+}
+
+.banner-setor{
+    background:linear-gradient(180deg,#111,#000);
+    padding:20px;
+    text-align:center;
+    border-bottom:3px solid var(--primary);
+}
+
+.banner-setor p{
+    margin:0;
+    font-size:14px;
+    color:#888;
+    text-transform:uppercase;
+    letter-spacing:4px;
+}
+
+.banner-setor h1{
+    margin:5px 0 0 0;
+    font-size:42px;
+    letter-spacing:8px;
+    color:var(--primary);
+    text-shadow:2px 2px 10px rgba(251,192,45,.5);
+    text-transform:uppercase;
+}
+
+.nav-topo{
+    background:#000;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn-nav{
+    padding:8px 15px;
+    border-radius:5px;
+    text-decoration:none !important;
+    color:white;
+    font-weight:bold;
+    font-size:11px;
+    text-transform:uppercase;
+    border:1px solid #444;
+    display:inline-flex;
+    align-items:center;
+}
+
+.container-filtros{
+    max-width:1100px;
+    margin:20px auto;
+    background:var(--card-bg);
+    padding:25px;
+    border-radius:15px;
+    border:1px solid #333;
+    text-align:center;
+}
+
+.grid-selects{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+    margin-top:15px;
+}
+
+label{
+    display:block;
+    font-size:10px;
+    color:#888;
+    text-transform:uppercase;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input{
+    background:#111;
+    border:1px solid #444;
+    color:#fff;
+    padding:12px;
+    border-radius:8px;
+    outline:none;
+    width:100%;
+    box-sizing:border-box;
+}
+
+.btn-acao{
+    padding:12px 25px;
+    border:none;
+    border-radius:5px;
+    font-weight:bold;
+    cursor:pointer;
+    text-transform:uppercase;
+    font-size:12px;
+}
+
+.btn-aplicar{
+    background:var(--primary);
+    color:#000;
+}
+
+.btn-limpar{
+    background:var(--danger);
+    color:#fff;
+}
+
+@keyframes flutuar{
+    0%{transform:translate(5vw,10vh) rotate(0deg);}
+    25%{transform:translate(70vw,20vh) rotate(10deg);}
+    50%{transform:translate(60vw,70vh) rotate(0deg);}
+    75%{transform:translate(10vw,60vh) rotate(-10deg);}
+    100%{transform:translate(5vw,10vh) rotate(0deg);}
+}
+
+.marca-dagua-viva{
+    position:fixed;
+    top:0;
+    left:0;
+    font-size:45px;
+    font-weight:900;
+    color:rgba(255,152,0,.15);
+    text-shadow:2px 2px 4px rgba(0,0,0,.3);
+    white-space:nowrap;
+    pointer-events:none;
+    z-index:9999;
+    animation:flutuar 40s linear infinite;
+    user-select:none;
+}
+
+.painel-saldos{
+    max-width:1100px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    background:#1a1a1a;
+    border-radius:10px;
+    border-left:5px solid var(--primary);
+    overflow:hidden;
+}
+
+.box-saldo{
+    padding:20px;
+    text-align:center;
+    border-right:1px solid #333;
+}
+
+.box-saldo h2{
+    margin:0;
+    font-size:12px;
+    color:#aaa;
+    text-transform:uppercase;
+}
+
+.box-saldo span{
+    font-size:32px;
+    font-weight:bold;
+}
+
+.tabela-container{
+    max-width:1200px;
+    margin:20px auto;
+    padding:0 10px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:rgba(17,17,17,.8);
+}
+
+th{
+    background:var(--primary);
+    color:#000;
+    padding:12px;
+    font-size:11px;
+    text-transform:uppercase;
+}
+
+td{
+    border-bottom:1px solid #222;
+    padding:15px;
+    text-align:center;
+    font-size:12px;
+    color:#fff;
+}
+
+@media(max-width:900px){
+
+    .grid-selects{
+        grid-template-columns:1fr;
+    }
+
+    .painel-saldos{
+        grid-template-columns:1fr;
+    }
+}
+
+/* ================================= */
+/* IMPRESSÃO */
+/* ================================= */
+
+@media print{
+
+    @page{
+        size: portrait;
+        margin: 8mm;
+    }
+
+    body{
+        background:#fff !important;
+        color:#000 !important;
+    }
+
+    body::before{
+        color:rgba(0,0,0,.05) !important;
+    }
+
+    .marca-dagua-viva{
+        animation:none !important;
+        top:50% !important;
+        left:50% !important;
+        transform:translate(-50%,-50%) rotate(-30deg) !important;
+        color:rgba(0,0,0,.05) !important;
+        font-size:70px !important;
+    }
+
+    .nav-topo,
+    .container-filtros{
+        display:none !important;
+    }
+
+    .banner-setor{
+        background:#fff !important;
+        border-top:2px solid #999 !important;
+        border-bottom:2px solid #999 !important;
+        padding:18px 10px !important;
+    }
+
+    .banner-setor h1{
+        color:#b8860b !important;
+        text-shadow:none !important;
+        font-size:30px !important;
+    }
+
+    .banner-setor p{
+        color:#b8860b !important;
+        font-size:10px !important;
+    }
+
+    .painel-saldos{
+        background:#fff !important;
+        border:1px solid #999 !important;
+        border-left:3px solid #999 !important;
+        margin-top:10px !important;
+    }
+
+    .box-saldo{
+        border-right:1px solid #ccc !important;
+    }
+
+    .box-saldo h2{
+        color:#000 !important;
+        font-size:10px !important;
+    }
+
+    .box-saldo span{
+        color:#000 !important;
+        font-size:22px !important;
+    }
+
+    .tabela-container{
+        max-width:100% !important;
+        margin-top:10px !important;
+        padding:0 !important;
+    }
+
+    table{
+        background:#fff !important;
+    }
+
+    th{
+        background:#fff !important;
+        color:#b8860b !important;
+        border-bottom:1px solid #999 !important;
+        font-size:9px !important;
+        padding:8px !important;
+    }
+
+    td{
+        color:#000 !important;
+        border-bottom:1px solid #ccc !important;
+        font-size:9px !important;
+        padding:8px !important;
+    }
+
+    small{
+        color:#555 !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="marca-dagua-viva">
+    D.artcom--Daniel
+</div>
+
+<div class="banner-setor">
+    <p>Relatório</p>
+    <h1>SETOR ROBÔ</h1>
+</div>
+
+<nav class="nav-topo">
+
+    <a href="../index.html" class="btn-nav" style="background:var(--blue);">
+        🏠 Início
+    </a>
+
+    <a href="cadastro.html" class="btn-nav" style="background:#a020f0;">
+        📝 Cadastro
+    </a>
+
+    <a href="entrada.html" class="btn-nav" style="background:var(--success);">
+        📥 Entrada
+    </a>
+
+    <a href="saida.html" class="btn-nav" style="background:var(--danger);">
+        📤 Saída
+    </a>
+
+    <a href="relatorio.html"
+       class="btn-nav"
+       style="background:#111; border:1px solid var(--primary); color:var(--primary);">
+        📊 Relatório Prod.
+    </a>
+
+    <button
+        onclick="atualizarRelatorio()"
+        class="btn-nav"
+        style="cursor:pointer; background:var(--success); border:none;"
+    >
+        🔄 Atualizar
+    </button>
+
+    <button
+        onclick="window.print()"
+        class="btn-nav"
+        style="cursor:pointer; background:var(--blue); border:none;"
+    >
+        🖨️ Imprimir
+    </button>
+
+</nav>
+
+<div class="container-filtros">
+
+    <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+
+        <div>
+            <label>De:</label>
+            <input type="date" id="dataDe" onchange="carregarDados()">
+        </div>
+
+        <div>
+            <label>Até:</label>
+            <input type="date" id="dataAte" onchange="carregarDados()">
+        </div>
+
+    </div>
+
+    <div class="grid-selects">
+
+        <div>
+            <label>Cliente</label>
+            <input type="text" id="busCli" placeholder="Buscar cliente..." oninput="carregarDados()">
+        </div>
+
+        <div>
+            <label>Projeto</label>
+            <input type="text" id="busProj" placeholder="Buscar projeto..." oninput="carregarDados()">
+        </div>
+
+        <div>
+            <label>Código</label>
+            <input type="text" id="busCod" placeholder="Buscar código..." oninput="carregarDados()">
+        </div>
+
+        <div>
+            <label>Produto</label>
+            <input type="text" id="busProd" placeholder="Buscar produto..." oninput="carregarDados()">
+        </div>
+
+        <div>
+            <label>Medida</label>
+            <input type="text" id="busMed" placeholder="Buscar medida..." oninput="carregarDados()">
+        </div>
+
+    </div>
+
+    <div style="margin-top:20px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+
+        <button onclick="carregarDados()" class="btn-acao btn-aplicar">
+            🔍 Aplicar Filtros
+        </button>
+
+        <button onclick="limparFiltros()" class="btn-acao btn-limpar">
+            🧹 Limpar Filtros
+        </button>
+
+    </div>
+
+</div>
+
+<div class="painel-saldos">
+
+    <div class="box-saldo">
+        <h2>ENTRADAS</h2>
+        <span id="res-ent" style="color:var(--primary)">0</span>
+    </div>
+
+    <div class="box-saldo">
+        <h2>SAÍDAS</h2>
+        <span id="res-sai" style="color:var(--danger)">0</span>
+    </div>
+
+    <div class="box-saldo">
+        <h2>SALDO ATUAL</h2>
+        <span id="res-total" style="color:var(--blue)">0</span>
+    </div>
+
+</div>
+
+<div class="tabela-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>DATA</th>
+                <th>CÓDIGO</th>
+                <th>CLIENTE / PROJETO</th>
+                <th>PRODUTO / MEDIDA</th>
+                <th>TIPO</th>
+                <th>QTD</th>
+            </tr>
+
+        </thead>
+
+        <tbody id="corpoGeral"></tbody>
+
+    </table>
+
+</div>
+
+<script>
+
+const API_PRODUTOS = "/api/produtos";
+const API_ENTRADAS = "/api/historicoEntrada";
+const API_SAIDAS = "/api/historicoSaida";
+
+let cacheProdutos = [];
+let cacheEntradas = [];
+let cacheSaidas = [];
+
+window.onload = () => carregarDados();
+
+async function buscarJSON(url){
+
+    try{
+
+        const resposta = await fetch(url);
+
+        if(!resposta.ok){
+            throw new Error("Erro ao buscar " + url);
+        }
+
+        const dados = await resposta.json();
+
+        return Array.isArray(dados) ? dados : [];
+
+    }catch(erro){
+
+        console.error(erro);
+        alert("❌ Não foi possível carregar os dados do servidor. Verifique se o Node/app.js está aberto.");
+
+        return [];
+    }
+}
+
+function formatarParaDataObj(str){
+
+    if(!str) return null;
+
+    if(String(str).includes("-"))
+        return new Date(str + "T00:00:00");
+
+    const [d,m,y] = String(str).split("/");
+
+    return new Date(y, m - 1, d);
+}
+
+
+function formatarDataBrasil(data){
+
+    if(!data) return "-";
+
+    data = String(data);
+
+    if(data.includes("-")){
+
+        const partes = data.split("-");
+
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    return data;
+}
+
+
+function atualizarRelatorio(){
+
+    carregarDados();
+
+    alert("✅ Relatório atualizado!");
+}
+
+function pegarQuantidade(reg){
+
+    return Number(
+        reg.qtd ??
+        reg.quantidade ??
+        reg.entrada ??
+        reg.saida ??
+        0
+    ) || 0;
+}
+
+function pegarCodigo(reg){
+
+    return reg.codigo ??
+           reg.cod ??
+           reg.COD ??
+           reg.codigoProduto ??
+           "-";
+}
+
+function pegarProdutoID(reg){
+
+    return reg.produtoID ??
+           reg.idProduto ??
+           reg.id_vinculo ??
+           reg.idVinculo ??
+           reg.produtoId ??
+           reg.id;
+}
+
+function montarReferencia(reg, cadastro){
+
+    const produtoID = pegarProdutoID(reg);
+    const codigo = pegarCodigo(reg);
+
+    return cadastro.find(p => String(p.id) === String(produtoID)) ||
+           cadastro.find(p => String(p.produtoID) === String(produtoID)) ||
+           cadastro.find(p => String(p.id_vinculo) === String(produtoID)) ||
+           cadastro.find(p => String(p.codigo) === String(codigo)) ||
+           cadastro.find(p => String(p.cod) === String(codigo)) ||
+           {
+                codigo: codigo || "-",
+                cliente: reg.cliente || "-",
+                projeto: reg.projeto || "-",
+                produto: reg.produto || "-",
+                medida: reg.medida || "-"
+           };
+}
+
+async function carregarDados(){
+
+    const [entradas, saidas, cadastro] = await Promise.all([
+        buscarJSON(API_ENTRADAS),
+        buscarJSON(API_SAIDAS),
+        buscarJSON(API_PRODUTOS)
+    ]);
+
+    cacheEntradas = entradas;
+    cacheSaidas = saidas;
+    cacheProdutos = cadastro;
+
+    const fDe =
+        document.getElementById("dataDe").value;
+
+    const fAte =
+        document.getElementById("dataAte").value;
+
+    const fCli =
+        (document.getElementById("busCli").value || "").toLowerCase();
+
+    const fProj =
+        (document.getElementById("busProj").value || "").toLowerCase();
+
+    const fCod =
+        (document.getElementById("busCod").value || "").toLowerCase();
+
+    const fProd =
+        (document.getElementById("busProd").value || "").toLowerCase();
+
+    const fMed =
+        (document.getElementById("busMed").value || "").toLowerCase();
+
+    const dataDeObj =
+        fDe ? new Date(fDe + "T00:00:00") : null;
+
+    const dataAteObj =
+        fAte ? new Date(fAte + "T00:00:00") : null;
+
+    let tEnt = 0;
+    let tSai = 0;
+
+    let movimentos = [];
+
+    entradas.forEach(e => {
+
+        const ref = montarReferencia(e, cadastro);
+
+        movimentos.push({
+            data:e.data || e.dataEntrada || e.createdAt || "",
+            tipo:"ENTRADA",
+            qtd:pegarQuantidade(e),
+            ref:ref
+        });
+    });
+
+    saidas.forEach(s => {
+
+        const ref = montarReferencia(s, cadastro);
+
+        movimentos.push({
+            data:s.data || s.dataSaida || s.createdAt || "",
+            tipo:"SAÍDA",
+            qtd:pegarQuantidade(s),
+            ref:ref
+        });
+    });
+
+    movimentos.sort((a,b) => {
+        return formatarParaDataObj(b.data) - formatarParaDataObj(a.data);
+    });
+
+    const corpo =
+        document.getElementById("corpoGeral");
+
+    corpo.innerHTML = "";
+
+    movimentos.forEach(mov => {
+
+        const dataMovObj =
+            formatarParaDataObj(mov.data);
+
+        const bateData =
+            (!dataDeObj || dataMovObj >= dataDeObj) &&
+            (!dataAteObj || dataMovObj <= dataAteObj);
+
+        const bateCli =
+            !fCli || String(mov.ref.cliente || "").toLowerCase().includes(fCli);
+
+        const bateProj =
+            !fProj || String(mov.ref.projeto || "").toLowerCase().includes(fProj);
+
+        const bateCod =
+            !fCod || String(mov.ref.codigo || mov.ref.cod || "").toLowerCase().includes(fCod);
+
+        const bateProd =
+            !fProd || String(mov.ref.produto || "").toLowerCase().includes(fProd);
+
+        const bateMed =
+            !fMed || String(mov.ref.medida || "").toLowerCase().includes(fMed);
+
+        if(
+            bateData &&
+            bateCli &&
+            bateProj &&
+            bateCod &&
+            bateProd &&
+            bateMed
+        ){
+
+            if(mov.tipo === "ENTRADA"){
+                tEnt += mov.qtd;
+            }else{
+                tSai += mov.qtd;
+            }
+
+            corpo.innerHTML += `
+                <tr>
+
+                    <td>${formatarDataBrasil(mov.data)}</td>
+
+                    <td style="color:var(--primary); font-weight:bold">
+                        ${mov.ref.codigo || mov.ref.cod || "-"}
+                    </td>
+
+                    <td>
+                        <div>${mov.ref.cliente || "-"}</div>
+                        <small style="color:#777">
+                            ${mov.ref.projeto || "-"}
+                        </small>
+                    </td>
+
+                    <td>
+                        <div>${mov.ref.produto || "-"}</div>
+                        <small style="color:#777">
+                            ${mov.ref.medida || "-"}
+                        </small>
+                    </td>
+
+                    <td style="
+                        color:${mov.tipo === "ENTRADA" ? "var(--success)" : "var(--danger)"};
+                        font-weight:bold;
+                    ">
+                        ${mov.tipo}
+                    </td>
+
+                    <td style="font-size:14px; font-weight:bold">
+                        ${mov.qtd}
+                    </td>
+
+                </tr>
+            `;
+        }
+    });
+
+    document.getElementById("res-ent").innerText = tEnt;
+    document.getElementById("res-sai").innerText = tSai;
+    document.getElementById("res-total").innerText = tEnt - tSai;
+}
+
+function limparFiltros(){
+
+    document
+        .querySelectorAll(".container-filtros input")
+        .forEach(i => i.value = "");
+
+    carregarDados();
+}
+
+</script>
+
+</body>
+</html>

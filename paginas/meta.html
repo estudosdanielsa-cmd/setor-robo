@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SETOR ROBÔ - Painel de Metas</title>
+
+<style>
+:root{
+    --primary:#ff9800;
+    --dark-bg:#121212;
+    --card-bg:#1e1e1e;
+    --purple:#6f42c1;
+    --success:#2e7d32;
+    --danger:#c62828;
+    --blue:#0277bd;
+}
+
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:var(--dark-bg);
+    color:#e0e0e0;
+    margin:0;
+    padding:20px;
+}
+
+.btn-voltar{
+    position:absolute;
+    top:25px;
+    left:20px;
+    background:var(--blue);
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    text-decoration:none;
+    font-weight:bold;
+    font-size:13px;
+    z-index:100;
+}
+
+.btn-voltar:hover{
+    background:#01579b;
+    transform:translateX(-5px);
+}
+
+.header{
+    text-align:center;
+    padding:20px;
+    border-bottom:2px solid var(--primary);
+    margin-bottom:25px;
+}
+
+.header h1{
+    color:var(--primary);
+    margin:0;
+    letter-spacing:3px;
+    font-size:28px;
+    text-transform:uppercase;
+}
+
+.filtros-container{
+    max-width:1100px;
+    margin:0 auto 25px auto;
+    background:var(--card-bg);
+    padding:15px;
+    border-radius:12px;
+    display:flex;
+    gap:15px;
+    border:1px solid #333;
+    flex-wrap:wrap;
+}
+
+.campo-busca{
+    flex:2;
+    min-width:250px;
+}
+
+.campo-status{
+    flex:1;
+    min-width:150px;
+}
+
+input,select{
+    width:100%;
+    padding:12px;
+    background:#2d2d2d;
+    border:1px solid #444;
+    color:white;
+    border-radius:8px;
+    font-size:14px;
+    outline:none;
+    box-sizing:border-box;
+}
+
+input:focus{
+    border-color:var(--primary);
+}
+
+.grid-resumo{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    margin-bottom:30px;
+    max-width:1100px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.card-stats{
+    background:var(--card-bg);
+    padding:15px;
+    border-radius:12px;
+    border-left:6px solid var(--primary);
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,.3);
+}
+
+.card-stats h3{
+    margin:0;
+    font-size:12px;
+    color:#888;
+    text-transform:uppercase;
+}
+
+.card-stats span{
+    font-size:26px;
+    font-weight:bold;
+    color:#fff;
+    display:block;
+    margin-top:5px;
+}
+
+.container-metas{
+    max-width:1100px;
+    margin:0 auto;
+    background:var(--card-bg);
+    padding:25px;
+    border-radius:15px;
+    border:1px solid #333;
+    position:relative;
+    overflow:hidden;
+}
+
+.container-metas::after{
+    content:"D.artcom--Daniel";
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(-15deg);
+    font-size:clamp(40px,8vw,80px);
+    font-weight:900;
+    color:rgba(255,255,255,.03);
+    pointer-events:none;
+    white-space:nowrap;
+    text-transform:uppercase;
+    z-index:0;
+}
+
+.item-meta{
+    margin-bottom:20px;
+    padding-bottom:15px;
+    border-bottom:1px solid #333;
+    position:relative;
+    z-index:1;
+}
+
+.info-topo{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+    align-items:center;
+    gap:10px;
+}
+
+.nome-cliente{
+    font-weight:bold;
+    color:var(--primary);
+    font-size:17px;
+}
+
+.projeto-txt{
+    color:#aaa;
+    font-size:12px;
+    margin-left:10px;
+}
+
+.barra-fundo{
+    width:100%;
+    height:24px;
+    background:#111;
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid #444;
+}
+
+.barra-progresso{
+    height:100%;
+    background:linear-gradient(90deg,var(--blue),#4fc3f7);
+    width:0%;
+    transition:width .5s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:bold;
+    color:white;
+}
+
+.status-tag{
+    padding:4px 12px;
+    border-radius:4px;
+    font-size:10px;
+    font-weight:bold;
+    text-transform:uppercase;
+    white-space:nowrap;
+}
+
+.tag-ok{
+    background:var(--purple);
+    color:white;
+}
+
+.tag-pendente{
+    background:#333;
+    color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<a href="../index.html" class="btn-voltar">🏠 VOLTAR AO INÍCIO</a>
+
+<div class="header">
+    <h1>🎯 GESTÃO DE METAS E PROJETOS</h1>
+</div>
+
+<div class="filtros-container">
+    <div class="campo-busca" style="position:relative;">
+        <input
+            type="text"
+            id="buscaTxt"
+            placeholder="🔍 Pesquisar por Cliente, Projeto ou Código..."
+            onkeyup="filtrarMetas()"
+            style="padding-right:45px;"
+        >
+
+        <button
+            onclick="limparBuscaMeta()"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--primary);cursor:pointer;font-size:18px;"
+            title="Limpar busca"
+        >
+            🧹
+        </button>
+    </div>
+
+    <div class="campo-status">
+        <select id="filtroStatus" onchange="filtrarMetas()">
+            <option value="todos">📊 Todos os Status</option>
+            <option value="producao">🏗️ Em Produção</option>
+            <option value="concluido">✅ Finalizados</option>
+        </select>
+    </div>
+</div>
+
+<div class="grid-resumo">
+    <div class="card-stats">
+        <h3>Total Produzido</h3>
+        <span id="globalProduzido">0</span>
+    </div>
+
+    <div class="card-stats" style="border-left-color:var(--blue);">
+        <h3>Projetos Ativos</h3>
+        <span id="globalPendentes">0</span>
+    </div>
+
+    <div class="card-stats" style="border-left-color:var(--purple);">
+        <h3>Finalizados</h3>
+        <span id="globalConcluidos">0</span>
+    </div>
+</div>
+
+<div class="container-metas">
+    <div id="listaMetas"></div>
+</div>
+
+<script>
+const API_PRODUTOS = "/api/produtos";
+const API_HISTORICO_ENTRADA = "/api/historicoEntrada";
+const API_METAS_ENTRADA = "/api/metasEntrada";
+
+let produtosCache = [];
+let historicoCache = [];
+let metasEntradaCache = {};
+
+window.onload = () => {
+    carregarDadosServidor();
+};
+
+function chaveProducao(id){
+    return "entrada_producao_" + id;
+}
+
+async function buscarJson(url, padrao){
+    try{
+        const resposta = await fetch(url);
+
+        if(!resposta.ok){
+            throw new Error("Erro ao buscar: " + url);
+        }
+
+        const dados = await resposta.json();
+
+        return (dados === null || dados === undefined) ? padrao : dados;
+
+    }catch(erro){
+        console.error(erro);
+        return padrao;
+    }
+}
+
+async function carregarDadosServidor(){
+    const container = document.getElementById("listaMetas");
+
+    container.innerHTML = `
+        <p style="text-align:center; color:#888; padding:30px; position:relative; z-index:1;">
+            Carregando metas sincronizadas com a entrada...
+        </p>
+    `;
+
+    produtosCache = await buscarJson(API_PRODUTOS, []);
+    historicoCache = await buscarJson(API_HISTORICO_ENTRADA, []);
+    metasEntradaCache = await buscarJson(API_METAS_ENTRADA, {});
+
+    if(Array.isArray(metasEntradaCache)){
+        metasEntradaCache = {};
+    }
+
+    filtrarMetas();
+}
+
+function normalizarTexto(valor){
+    return String(valor || "").trim().toUpperCase();
+}
+
+function registroPertenceAoProduto(reg, p){
+    const id = p.id;
+    const cod = p.codigo || p.cod || "";
+    const cliente = p.cliente || p.nome || "";
+    const projeto = p.projeto || p.proj || "";
+    const produto = p.produto || "";
+    const medida = p.medida || "";
+
+    if(String(reg.produtoID || "") === String(id)) return true;
+    if(String(reg.idProduto || "") === String(id)) return true;
+    if(String(reg.id_vinculo || "") === String(id)) return true;
+
+    const codIgual = normalizarTexto(reg.codigo || reg.cod) === normalizarTexto(cod);
+    const clienteIgual = normalizarTexto(reg.cliente || reg.nome) === normalizarTexto(cliente);
+    const projetoIgual = normalizarTexto(reg.projeto || reg.proj) === normalizarTexto(projeto);
+    const produtoIgual = normalizarTexto(reg.produto) === normalizarTexto(produto);
+    const medidaIgual = normalizarTexto(reg.medida) === normalizarTexto(medida);
+
+    return codIgual && clienteIgual && projetoIgual && produtoIgual && medidaIgual;
+}
+
+function pegarDadosMetaEntrada(produto){
+    const chave = chaveProducao(produto.id);
+    const salvo = metasEntradaCache[chave] || {};
+
+    const meta = Number(salvo.meta || 0);
+
+    // Produzido principal vem do mesmo local que a Entrada usa.
+    // Se por algum motivo estiver zerado, recalcula pelo historicoEntrada.
+    let produzido = Number(salvo.produzido || 0);
+
+    if(produzido <= 0){
+        produzido = historicoCache
+            .filter(reg => registroPertenceAoProduto(reg, produto))
+            .reduce((total, reg) => total + Number(reg.qtd || reg.quantidade || 0), 0);
+    }
+
+    return { meta, produzido };
+}
+
+function filtrarMetas(){
+    const produtos = produtosCache || [];
+
+    const busca = document.getElementById("buscaTxt").value.toUpperCase().trim();
+    const statusFiltro = document.getElementById("filtroStatus").value;
+    const container = document.getElementById("listaMetas");
+
+    container.innerHTML = "";
+
+    let totalProduzidoGeral = 0;
+    let ativos = 0;
+    let finalizados = 0;
+
+    produtos.forEach(p => {
+        const cod = p.codigo || p.cod || "";
+        const cliente = p.cliente || p.nome || "";
+        const projeto = p.projeto || p.proj || "";
+        const produto = p.produto || "";
+        const medida = p.medida || "";
+
+        const dados = pegarDadosMetaEntrada(p);
+        const meta = dados.meta;
+        const produzido = dados.produzido;
+
+        if(meta <= 0 && produzido <= 0) return;
+
+        const pct = meta > 0 ? Math.min((produzido / meta) * 100, 100) : 0;
+        const concluido = meta > 0 && produzido >= meta;
+        const saldo = meta > 0 ? Math.max(meta - produzido, 0) : "Livre";
+
+        const textoBusca = `${cod} ${cliente} ${projeto} ${produto} ${medida}`.toUpperCase();
+
+        if(busca && !textoBusca.includes(busca)) return;
+
+        if(statusFiltro === "producao" && concluido) return;
+        if(statusFiltro === "concluido" && !concluido) return;
+
+        totalProduzidoGeral += produzido;
+
+        if(concluido){
+            finalizados++;
+        }else{
+            ativos++;
+        }
+
+        const div = document.createElement("div");
+        div.className = "item-meta";
+
+        div.innerHTML = `
+            <div class="info-topo">
+                <div>
+                    <span class="nome-cliente">${cliente || "-"}</span>
+                    <span class="projeto-txt">
+                        | PROJ: ${projeto || "-"} | CÓD: ${cod || "-"}
+                    </span>
+                </div>
+
+                <span class="status-tag ${concluido ? 'tag-ok' : 'tag-pendente'}">
+                    ${concluido ? 'FINALIZADO ✅' : 'EM PRODUÇÃO 🏗️'}
+                </span>
+            </div>
+
+            <div style="font-size:12px; margin-bottom:6px; color:#888;">
+                Produto: <strong>${produto || "-"}</strong> |
+                Medida: <strong>${medida || "-"}</strong><br>
+                Progresso Real:
+                <strong>${produzido}</strong> /
+                Meta:
+                <strong>${meta > 0 ? meta : "Livre"}</strong> |
+                Saldo:
+                <strong>${saldo}</strong>
+            </div>
+
+            <div class="barra-fundo">
+                <div class="barra-progresso"
+                    style="width:${pct}%; background:${concluido ? 'var(--purple)' : ''};">
+                    ${meta > 0 ? Math.round(pct) + "%" : "0%"}
+                </div>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+
+    document.getElementById("globalProduzido").innerText = totalProduzidoGeral.toLocaleString();
+    document.getElementById("globalPendentes").innerText = ativos;
+    document.getElementById("globalConcluidos").innerText = finalizados;
+
+    if(container.innerHTML === ""){
+        container.innerHTML = `
+            <p style="text-align:center; color:#666; padding:30px; position:relative; z-index:1;">
+                Nenhum projeto com meta ou produção encontrado.
+            </p>
+        `;
+    }
+}
+
+function limparBuscaMeta(){
+    document.getElementById("buscaTxt").value = "";
+    filtrarMetas();
+}
+
+</script>
+
+</body>
+</html>

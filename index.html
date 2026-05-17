@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SETOR ROBÔ - Controle de Produção</title>
+ <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <style>
+        * { box-sizing: border-box; }
+        
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #000;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* --- MARCA D'ÁGUA REFORÇADA --- */
+        @keyframes flutuar {
+            0%   { transform: translate(5vw, 10vh) rotate(0deg); }
+            25%  { transform: translate(70vw, 20vh) rotate(10deg); }
+            50%  { transform: translate(60vw, 70vh) rotate(0deg); }
+            75%  { transform: translate(10vw, 60vh) rotate(-10deg); }
+            100% { transform: translate(5vw, 10vh) rotate(0deg); }
+        }
+
+        .marca-dagua-viva {
+            position: fixed; top: 0; left: 0; font-size: 45px; font-weight: 900;
+            /* Aumentado para 0.15 para ficar mais forte */
+            color: rgba(255, 152, 0, 0.15); 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            pointer-events: none; z-index: 5; animation: flutuar 40s linear infinite;
+            user-select: none;
+        }
+
+        .fundo-total {
+            position: fixed; inset: 0;
+            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.4)), 
+                        url('img/fundo.jpg') no-repeat center center;
+            background-size: contain; 
+            z-index: 0;
+        }
+       
+        canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+
+        .flash {
+            position: fixed; inset: 0; background: white;
+            opacity: 0; z-index: 100; pointer-events: none;
+        }
+
+        .container {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            height: 100vh; text-align: center;
+        }
+
+        .header-titulo { margin-bottom: 25px; }
+
+        .titulo-principal {
+            color: #fff; font-size: 52px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 6px; margin: 0;
+            text-shadow: 0 0 20px #ff9800, 0 0 40px #ff6a00;
+        }
+
+        .sub-titulo {
+            color: #fff; font-size: 18px; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 3px; margin-top: -5px;
+            opacity: 0.9; text-shadow: 2px 2px 5px #000;
+        }
+
+        .btn {
+            width: 210px; padding: 9px; margin: 4px 0;
+            background: rgba(0, 0, 0, 0.4); color: #fff;
+            border: 2px solid #ff9800; border-radius: 6px;
+            font-size: 12px; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 2px; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.3); backdrop-filter: blur(2px);
+        }
+
+        .btn:hover { background: #ff9800; color: #000; transform: scale(1.05); box-shadow: 0 0 25px #ff9800; }
+
+        .ajuda-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: none; align-items: center; justify-content: center; z-index: 200;
+        }
+
+        .ajuda-conteudo {
+            background: #111; padding: 30px; border-radius: 15px;
+            border: 2px solid #ff9800; color: white; max-width: 400px; text-align: center;
+        }
+
+        #textoAjuda { min-height: 100px; margin: 20px 0; font-size: 16px; line-height: 1.5; }
+
+        .btn-nav-ajuda { background: #ff9800; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; margin: 5px; }
+
+        .spark-clique {
+            position: absolute; width: 4px; height: 4px; background: yellow;
+            border-radius: 50%; pointer-events: none; animation: sparkAnim 0.6s linear forwards;
+        }
+
+        @keyframes sparkAnim {
+            0% { opacity: 1; transform: translate(0, 0); }
+            100% { opacity: 0; transform: translate(var(--x), var(--y)); }
+        }
+
+        .creditos { position: fixed; bottom: 10px; right: 20px; color: rgba(255,255,255,0.6); font-size: 11px; z-index: 10; }
+    </style>
+</head>
+<body>
+
+    <div class="marca-dagua-viva">D.artcom--Daniel</div>
+
+    <div class="fundo-total"></div>
+    <div class="flash" id="flash"></div>
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <div class="header-titulo">
+            <h1 class="titulo-principal">SETOR ROBÔ</h1>
+            <div class="sub-titulo">CONTROLE DE PRODUÇÃO</div>
+        </div>
+
+        <button class="btn" onclick="clicar(event,'paginas/cadastro.html')">⚙️ CADASTRO</button>
+        <button class="btn" onclick="clicar(event,'paginas/entrada.html')">🏗️ ENTRADA</button>
+        <button class="btn" onclick="clicar(event,'paginas/saida.html')">📤 SAÍDA</button>
+        <button class="btn" onclick="clicar(event,'paginas/meta.html')">🎯 META</button>
+        <button class="btn" onclick="clicar(event,'paginas/relatorio.html')">📊 RELATÓRIO</button>
+        <button class="btn" onclick="clicar(event,'paginas/geral.html')">🌎 GERAL</button>
+        <button class="btn" onclick="abrirAjuda()" style="border-color:#0277bd; margin-top:15px;">❓ INSTRUÇÕES</button>
+    </div>
+
+    <div id="ajudaBox" class="ajuda-modal">
+        <div class="ajuda-conteudo">
+            <h2 style="color:#ff9800; margin-top:0;">🆘 MANUAL DO SISTEMA</h2>
+            <div id="textoAjuda"></div>
+            <div>
+                <button class="btn-nav-ajuda" onclick="anterior()">⬅</button>
+                <button class="btn-nav-ajuda" onclick="proximo()">➡</button>
+            </div>
+            <button onclick="fecharAjuda()" style="margin-top:20px; background:#444; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">FECHAR</button>
+        </div>
+    </div>
+
+    <div class="creditos">Elaborado por: D.ARTCOM--Daniel</div>
+    <audio id="somSolda"><source src="img/solda.mp3"></audio>
+
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+    function criarParticula(){
+        particles.push({
+            x: Math.random()*canvas.width, y: canvas.height + 10,
+            vx: (Math.random()-0.5)*2, vy: Math.random()*-4 - 1, life: 100
+        });
+    }
+
+    function animar(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        if(Math.random() < 0.1) criarParticula();
+        particles.forEach((p,i)=>{
+            p.x += p.vx; p.y += p.vy; p.life--;
+            ctx.fillStyle = "#ff9800"; ctx.globalAlpha = p.life/100;
+            ctx.fillRect(p.x, p.y, 2, 2);
+            if(p.life <= 0) particles.splice(i,1);
+        });
+        requestAnimationFrame(animar);
+    }
+    animar();
+
+    function clicar(event, pagina){
+        let som = document.getElementById("somSolda");
+        som.currentTime = 0; som.play().catch(()=>{});
+
+        for(let i=0; i<15; i++){
+            let spark = document.createElement("div");
+            spark.className = "spark-clique";
+            let x = (Math.random()*160 - 80) + "px";
+            let y = (Math.random()*160 - 80) + "px";
+            spark.style.setProperty("--x", x);
+            spark.style.setProperty("--y", y);
+            spark.style.left = event.clientX + "px";
+            spark.style.top = event.clientY + "px";
+            document.body.appendChild(spark);
+            setTimeout(()=> spark.remove(), 600);
+        }
+
+        let flash = document.getElementById("flash");
+        setTimeout(()=> { flash.style.transition = "0.2s"; flash.style.opacity = "1"; }, 200);
+        setTimeout(()=> window.location.href = pagina, 500);
+    }
+
+    
+    
+       let passo = 0;
+
+const passos = [
+
+"👋 <b>BOAS-VINDAS</b><br>Bem-vindo ao sistema oficial do SETOR ROBÔ.<br>Todo o controle de produção é sincronizado automaticamente.",
+
+"1️⃣ <b>CADASTRO</b><br>Cadastre clientes, projetos, códigos, produtos e medidas.<br>O cadastro é a base principal de todo o sistema.",
+
+"2️⃣ <b>ENTRADA</b><br>Registre entradas de produção e materiais.<br>As informações ficam sincronizadas automaticamente com metas e relatórios.",
+
+"3️⃣ <b>SAÍDA</b><br>Registre saídas de peças prontas.<br>O sistema realiza baixa automática no saldo.",
+
+"4️⃣ <b>META</b><br>Defina metas individuais para cada cliente e projeto.<br>O progresso é calculado automaticamente pela produção registrada.",
+
+"5️⃣ <b>RELATÓRIO OFICIAL</b><br>Visualize entradas registradas, ocorrências, filtros e produção detalhada por item.",
+
+"6️⃣ <b>RELATÓRIO GERAL</b><br>Exibe entradas, saídas e saldo geral sincronizado em tempo real.",
+
+"7️⃣ <b>RESUMO CONSOLIDADO</b><br>Mostra totais de entrada, saída e saldo separados por cliente e projeto.",
+
+"8️⃣ <b>FILTROS</b><br>Todos os relatórios possuem filtros por:<br>cliente, projeto, código, produto, medida e datas.",
+
+"9️⃣ <b>OCORRÊNCIAS</b><br>Problemas ou observações podem ser registrados e filtrados no relatório oficial.",
+
+"🔟 <b>SALDO AUTOMÁTICO</b><br>O sistema calcula automaticamente entradas menos saídas em tempo real.",
+
+"1️⃣1️⃣ <b>SINCRONIZAÇÃO</b><br>Ao alterar dados do cadastro, entrada, saída, metas e relatórios permanecem vinculados.",
+
+"1️⃣2️⃣ <b>ATUALIZAÇÃO</b><br>Use os botões de atualizar dos relatórios para sincronizar imediatamente os dados exibidos.",
+
+"1️⃣3️⃣ <b>IMPRESSÃO PDF</b><br>Os relatórios podem ser impressos ou salvos em PDF diretamente pelo sistema.",
+
+"✅ <b>SISTEMA FINALIZADO</b><br>SETOR ROBÔ sincronizado com controle de produção, metas, saldo, relatórios e histórico completo."
+
+];
+    
+
+    function abrirAjuda(){
+        document.getElementById("ajudaBox").style.display = "flex";
+        atualizarTexto();
+    }
+    function fecharAjuda(){ document.getElementById("ajudaBox").style.display = "none"; }
+    function proximo(){ if(passo < passos.length - 1) { passo++; atualizarTexto(); } }
+    function anterior(){ if(passo > 0) { passo--; atualizarTexto(); } }
+    function atualizarTexto(){ document.getElementById("textoAjuda").innerHTML = passos[passo]; }
+</script>
+</body>
+</html>

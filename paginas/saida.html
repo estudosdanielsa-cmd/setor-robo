@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>BAIXA DE ESTOQUE</title>
+
+<style>
+body{margin:0;font-family:Segoe UI;background:#0d0d0d;color:#fff;}
+body::after{content:"D.artcom--Daniel";position:fixed;right:35px;bottom:25px;font-size:32px;color:rgba(255,152,0,0.15);pointer-events:none;}
+
+.topo{display:flex;justify-content:center;gap:10px;padding:12px;border-bottom:2px solid #ff9800;}
+.topo a{padding:8px 14px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:bold;color:#fff;}
+.btn-blue{background:#0288d1;}
+.btn-green{background:#2e7d32;}
+.btn-yellow{border:2px solid #ff9800;color:#ff9800;}
+.btn-gold{background:#ff9800;color:#000;}
+
+.card{max-width:1000px;margin:30px auto;background:#1a1a1a;padding:25px;border-radius:12px;border:1px solid #333;}
+h2{text-align:center;color:#ff5252;}
+
+.box{border:1px solid red;border-radius:10px;padding:15px;}
+.grid{display:grid;grid-template-columns:180px 1fr;gap:10px;}
+
+label{font-size:11px;color:#aaa;display:block;margin-top:10px;}
+input,select{width:100%;padding:12px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:6px;box-sizing:border-box;}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px;}
+.card-box{padding:15px;border-radius:8px;text-align:center;font-weight:bold;}
+
+.btn{padding:18px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;width:100%;margin-top:15px;}
+.btn-red{background:#c62828;color:#fff;}
+.btn-gray{background:#555;color:#fff;}
+
+table{width:100%;margin-top:25px;font-size:11px;border-collapse:collapse;}
+th{color:red;padding:10px;}
+td{padding:10px;text-align:center;border-bottom:1px solid #222;}
+small{color:#999;}
+
+.lixeira{
+    background:#c62828;
+    color:#fff;
+    border:none;
+    padding:6px 10px;
+    cursor:pointer;
+    border-radius:5px;
+    font-size:12px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topo">
+<a href="index.html" class="btn-blue">🏠 INÍCIO</a>
+<a href="entrada.html" class="btn-green">📥 ENTRADA</a>
+<a href="relatorio.html" class="btn-yellow">📊 RELATÓRIOS</a>
+<a href="geral.html" class="btn-gold">📊 RELATÓRIO GERAL</a>
+</div>
+
+<div class="card">
+<h2>📥 BAIXA DE ESTOQUE SINCRONIZADA</h2>
+
+<div class="box">
+<div class="grid">
+<div>
+<label>📅 DATA SAÍDA</label>
+<input type="date" id="dataSaida">
+</div>
+
+<div>
+<label>🔍 BUSCAR ITEM</label>
+<input type="text" id="busca" oninput="buscarItem()" placeholder="Código, cliente, projeto, produto ou medida">
+</div>
+</div>
+
+<label>ITEM SELECIONADO</label>
+<select id="selectItem" onchange="atualizarCards(this.value)">
+<option value="">Selecione...</option>
+</select>
+</div>
+
+<div class="cards">
+<div class="card-box" style="background:#2e7d32">TOTAL PRODUZIDO<br><span id="totalProduzido">0</span></div>
+<div class="card-box" style="background:#455a64">JÁ RETIRADO<br><span id="totalRetirado">0</span></div>
+<div class="card-box" style="background:#0277bd">SALDO DISPONÍVEL<br><span id="saldoDisponivel">0</span></div>
+</div>
+
+<div class="grid" style="grid-template-columns:1fr 1fr;">
+<div>
+<label>DESTINO / OBSERVAÇÃO</label>
+<input id="destino">
+</div>
+
+<div>
+<label>QTD PARA RETIRADA</label>
+<input type="number" id="qtdRetirada">
+</div>
+</div>
+
+<button class="btn btn-red" onclick="confirmarBaixa()">🚀 CONFIRMAR BAIXA</button>
+<button class="btn btn-gray" onclick="limpar()">✖ DESFAZER</button>
+
+<table>
+<thead>
+<tr>
+<th>DATA</th>
+<th>CÓDIGO</th>
+<th>CLIENTE / PROJETO</th>
+<th>PRODUTO / MEDIDA</th>
+<th>QTD</th>
+<th>DESTINO</th>
+<th>AÇÕES</th>
+</tr>
+</thead>
+<tbody id="corpoTabelaSaida"></tbody>
+</table>
+</div>
+
+<script>
+const API_PROD = "/api/produtos";
+const API_HIST_ENTRADA = "/api/historicoEntrada";
+const API_HIST_SAIDA = "/api/historicoSaida";
+
+let produtos = [];
+let historicoEntrada = [];
+let historicoSaida = [];
+
+function normalizar(txt){
+    return (txt||"").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+
+async function carregarJSON(api, padrao){
+    try{
+        const resposta = await fetch(api);
+        if(!resposta.ok) throw new Error("Erro ao carregar " + api);
+        const dados = await resposta.json();
+        return (dados === null || dados === undefined) ? padrao : dados;
+    }catch(erro){
+        console.error(erro);
+        alert("⚠️ Não foi possível carregar o banco de dados. Verifique se o servidor está ligado.");
+        return padrao;
+    }
+}
+
+async function salvarJSON(api, dados){
+    try{
+        const resposta = await fetch(api,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(dados)
+        });
+        if(!resposta.ok) throw new Error("Erro ao salvar " + api);
+        return true;
+    }catch(erro){
+        console.error(erro);
+        alert("⚠️ Não foi possível salvar no banco de dados. Verifique se o servidor está ligado.");
+        return false;
+    }
+}
+
+async function carregarBanco(){
+    produtos = await carregarJSON(API_PROD, []);
+    historicoEntrada = await carregarJSON(API_HIST_ENTRADA, []);
+    historicoSaida = await carregarJSON(API_HIST_SAIDA, []);
+
+    if(!Array.isArray(produtos)) produtos = [];
+    if(!Array.isArray(historicoEntrada)) historicoEntrada = [];
+    if(!Array.isArray(historicoSaida)) historicoSaida = [];
+}
+
+function idProduto(p){
+    return String(p?.id ?? p?.produtoID ?? p?.codigo ?? "");
+}
+
+function codigoProduto(p){
+    return String(p?.codigo ?? p?.cod ?? "");
+}
+
+function encontrarProduto(valor){
+    const chave = String(valor || "");
+    return produtos.find(p => String(p.id) === chave || String(p.codigo) === chave || String(p.cod) === chave);
+}
+
+function registroPertenceAoProduto(reg, item){
+    if(!reg || !item) return false;
+
+    const itemId = String(item.id ?? "");
+    const itemCodigo = String(item.codigo ?? item.cod ?? "");
+
+    const regProdutoID = String(reg.produtoID ?? reg.idProduto ?? reg.produtoId ?? "");
+    const regCod = String(reg.cod ?? reg.codigo ?? "");
+
+    return (
+        (itemId && regProdutoID && regProdutoID === itemId) ||
+        (itemCodigo && regCod && regCod === itemCodigo) ||
+        (itemId && regCod && regCod === itemId) ||
+        (itemCodigo && regProdutoID && regProdutoID === itemCodigo)
+    );
+}
+
+function quantidadeEntrada(reg){
+    return Number(reg?.qtd ?? reg?.entrada ?? reg?.prod ?? reg?.produzido ?? 0) || 0;
+}
+
+function quantidadeSaida(reg){
+    return Number(reg?.qtd ?? reg?.saida ?? reg?.retirada ?? 0) || 0;
+}
+
+async function carregarSelect(){
+    await carregarBanco();
+
+    selectItem.innerHTML='<option value="">Selecione...</option>';
+
+    produtos.forEach(p=>{
+        let op=document.createElement('option');
+        op.value=idProduto(p);
+        op.text=`${p.codigo||p.cod||""} | ${p.cliente||""} | ${p.projeto||""} | ${p.produto||""} | ${p.medida||""}`;
+
+        op.dataset.busca=normalizar(`
+            ${p.codigo||p.cod||""}
+            ${p.cliente||""}
+            ${p.projeto||""}
+            ${p.produto||""}
+            ${p.medida||""}
+        `);
+
+        selectItem.appendChild(op);
+    });
+}
+
+function buscarItem(){
+    let termo=normalizar(busca.value);
+
+    if(!termo){
+        selectItem.value="";
+        atualizarCards("");
+        return;
+    }
+
+    for(let op of selectItem.options){
+        let texto=op.dataset.busca || normalizar(op.text);
+
+        if(texto.includes(termo)){
+            selectItem.value=op.value;
+            atualizarCards(op.value);
+            return;
+        }
+    }
+}
+
+function calcularMovimento(item){
+    let prod=0;
+    let saida=0;
+
+    historicoEntrada.forEach(reg=>{
+        if(registroPertenceAoProduto(reg,item)){
+            prod += quantidadeEntrada(reg);
+        }
+    });
+
+    historicoSaida.forEach(reg=>{
+        if(registroPertenceAoProduto(reg,item)){
+            saida += quantidadeSaida(reg);
+        }
+    });
+
+    return {prod, saida, saldo: prod - saida};
+}
+
+function atualizarCards(valor){
+    let item=encontrarProduto(valor);
+
+    if(!item){
+        totalProduzido.innerText=0;
+        totalRetirado.innerText=0;
+        saldoDisponivel.innerText=0;
+        return;
+    }
+
+    const mov = calcularMovimento(item);
+
+    totalProduzido.innerText=mov.prod;
+    totalRetirado.innerText=mov.saida;
+    saldoDisponivel.innerText=mov.saldo;
+}
+
+async function confirmarBaixa(){
+    await carregarBanco();
+
+    let valor=selectItem.value;
+    let qtd=Number(qtdRetirada.value)||0;
+    let item=encontrarProduto(valor);
+
+    if(!item || qtd<=0){
+        alert("Selecione o item e informe a quantidade!");
+        return;
+    }
+
+    const mov = calcularMovimento(item);
+
+    if(qtd>mov.saldo){
+        alert("Saldo insuficiente!");
+        return;
+    }
+
+    const dataFormatada = dataSaida.value
+        ? new Date(dataSaida.value+"T00:00:00").toLocaleDateString("pt-BR")
+        : new Date().toLocaleDateString("pt-BR");
+
+    historicoSaida.unshift({
+        id:Date.now(),
+        produtoID:item.id,
+        codigo:item.codigo||item.cod||"",
+        cod:item.codigo||item.cod||"",
+        data:dataFormatada,
+        cliente:item.cliente||"",
+        projeto:item.projeto||"",
+        produto:item.produto||"",
+        medida:item.medida||"",
+        qtd:qtd,
+        destino:destino.value
+    });
+
+    const salvou = await salvarJSON(API_HIST_SAIDA, historicoSaida);
+    if(!salvou) return;
+
+    await carregarBanco();
+    render();
+    atualizarCards(idProduto(item));
+    limpar();
+}
+
+function render(){
+    corpoTabelaSaida.innerHTML=historicoSaida.map(i=>{
+        let ref=produtos.find(p=>registroPertenceAoProduto(i,p)) || {};
+        let codigo=i.codigo || i.cod || ref.codigo || ref.cod || "-";
+        let cliente=i.cliente || ref.cliente || "-";
+        let projeto=i.projeto || ref.projeto || "-";
+        let produto=i.produto || ref.produto || "-";
+        let medida=i.medida || ref.medida || "-";
+
+        return `
+        <tr>
+            <td>${i.data||""}</td>
+            <td style="color:red;font-weight:bold">${codigo}</td>
+
+            <td>
+                <div>${cliente}</div>
+                <small>${projeto}</small>
+            </td>
+
+            <td>
+                <div>${produto}</div>
+                <small>${medida}</small>
+            </td>
+
+            <td>${quantidadeSaida(i)}</td>
+            <td>${i.destino||""}</td>
+            <td>
+                <button class="lixeira" onclick="excluir(${i.id})" title="Excluir registro">🗑️ Excluir</button>
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+async function excluir(id){
+    if(!confirm("Deseja excluir esta baixa?")) return;
+
+    await carregarBanco();
+
+    const itemExcluido = historicoSaida.find(i=>Number(i.id)===Number(id));
+    historicoSaida = historicoSaida.filter(i=>Number(i.id)!==Number(id));
+
+    const salvou = await salvarJSON(API_HIST_SAIDA, historicoSaida);
+    if(!salvou) return;
+
+    await carregarBanco();
+    render();
+
+    if(itemExcluido){
+        const ref = produtos.find(p=>registroPertenceAoProduto(itemExcluido,p));
+        if(ref) atualizarCards(idProduto(ref));
+    }
+}
+
+function limpar(){
+    qtdRetirada.value="";
+    destino.value="";
+}
+
+window.onload=async ()=>{
+    dataSaida.value=new Date().toISOString().split('T')[0];
+    await carregarSelect();
+    render();
+};
+</script>
+
+</body>
+</html>

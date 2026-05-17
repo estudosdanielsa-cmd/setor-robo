@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Painel de Estoque</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f0f0f0;
+}
+
+h2 {
+    text-align: center;
+}
+
+.menu {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu button {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.inicio { background: #0d5cab; color: white; }
+.entrada { background: #333; color: white; }
+.saida { background: orange; color: white; }
+
+table {
+    width: 95%;
+    margin: auto;
+    border-collapse: collapse;
+}
+
+th {
+    background: green;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    background: #eee;
+    padding: 10px;
+    text-align: center;
+}
+
+.baixo { background: orange; color: white; }
+.zerado { background: red; color: white; }
+.ok { background: green; color: white; }
+
+</style>
+</head>
+
+<body>
+
+<h2>📊 Painel de Estoque</h2>
+
+<div class="menu">
+    <button class="inicio" onclick="voltar()">🏠 Início</button>
+    <button class="entrada" onclick="irEntrada()">📥 Entrada</button>
+    <button class="saida" onclick="irSaida()">📤 Saída</button>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>CÓDIGO</th>
+<th>PRODUTO</th>
+<th>CLIENTE</th>
+<th>PROJETO</th>
+<th>ENTRADA</th>
+<th>SAÍDA</th>
+<th>SALDO</th>
+<th>STATUS</th>
+</tr>
+</thead>
+
+<tbody id="tabela"></tbody>
+</table>
+
+<script>
+
+function carregarPainel(){
+
+    let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+    let entradas = JSON.parse(localStorage.getItem("entrada")) || [];
+    let saidas = JSON.parse(localStorage.getItem("saida")) || [];
+
+    let tabela = document.getElementById("tabela");
+    tabela.innerHTML = "";
+
+    produtos.forEach(p => {
+
+        let totalEntrada = 0;
+        let totalSaida = 0;
+
+        entradas.forEach(e => {
+            if(e.codigo === p.codigo && e.projeto === p.projeto){
+                totalEntrada += Number(e.qtd);
+            }
+        });
+
+        saidas.forEach(s => {
+            if(s.codigo === p.codigo && s.projeto === p.projeto){
+                totalSaida += Number(s.qtd);
+            }
+        });
+
+        let saldo = totalEntrada - totalSaida;
+
+        let status = "";
+        let classe = "";
+
+        if(saldo <= 0){
+            status = "ZERADO";
+            classe = "zerado";
+        } else if(saldo <= 10){
+            status = "BAIXO";
+            classe = "baixo";
+        } else {
+            status = "OK";
+            classe = "ok";
+        }
+
+        tabela.innerHTML += `
+        <tr>
+            <td>${p.codigo}</td>
+            <td>${p.produto}</td>
+            <td>${p.cliente}</td>
+            <td>${p.projeto}</td>
+            <td>${totalEntrada}</td>
+            <td>${totalSaida}</td>
+            <td>${saldo}</td>
+            <td class="${classe}">${status}</td>
+        </tr>
+        `;
+    });
+}
+
+/* NAV */
+function voltar(){ window.location.href = "../index.html"; }
+function irEntrada(){ window.location.href = "entrada.html"; }
+function irSaida(){ window.location.href = "saida.html"; }
+
+carregarPainel();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.ARTCOM - RESUMO SETOR ROBÔ</title>
+
+<style>
+
+:root{
+    --primary:#fbc02d;
+    --dark-bg:#000;
+    --card-bg:#1a1a1a;
+    --danger:#ff5252;
+    --success:#4caf50;
+    --blue:#2196f3;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:var(--dark-bg);
+    color:#fff;
+    margin:0;
+    padding:0;
+    overflow-x:hidden;
+}
+
+/* MARCA */
+
+@keyframes flutuar{
+    0%{transform:translate(5vw,10vh) rotate(0deg);}
+    25%{transform:translate(70vw,20vh) rotate(10deg);}
+    50%{transform:translate(60vw,70vh) rotate(0deg);}
+    75%{transform:translate(10vw,60vh) rotate(-10deg);}
+    100%{transform:translate(5vw,10vh) rotate(0deg);}
+}
+
+.marca-dagua-viva{
+    position:fixed;
+    top:0;
+    left:0;
+    font-size:45px;
+    font-weight:900;
+    color:rgba(255,152,0,.15);
+    text-shadow:2px 2px 4px rgba(0,0,0,.3);
+    white-space:nowrap;
+    pointer-events:none;
+    z-index:9999;
+    animation:flutuar 40s linear infinite;
+    user-select:none;
+}
+
+/* TOPO */
+
+.banner-setor{
+    background:linear-gradient(180deg,#111,#000);
+    padding:25px;
+    text-align:center;
+    border-bottom:3px solid var(--primary);
+}
+
+.banner-setor p{
+    margin:0;
+    font-size:14px;
+    color:#888;
+    text-transform:uppercase;
+    letter-spacing:4px;
+}
+
+.banner-setor h1{
+    margin:5px 0 0 0;
+    font-size:42px;
+    letter-spacing:8px;
+    color:var(--primary);
+    text-shadow:2px 2px 10px rgba(251,192,45,.4);
+    text-transform:uppercase;
+}
+
+/* MENU */
+
+.nav-topo{
+    background:#000;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn-nav{
+    padding:10px 20px;
+    border-radius:6px;
+    text-decoration:none !important;
+    color:white;
+    font-weight:bold;
+    font-size:11px;
+    text-transform:uppercase;
+    border:1px solid #444;
+    display:inline-flex;
+    align-items:center;
+    cursor:pointer;
+}
+
+/* FILTROS */
+
+.container-filtros{
+    max-width:950px;
+    margin:20px auto;
+    background:var(--card-bg);
+    padding:25px;
+    border-radius:15px;
+    border:1px solid #333;
+    text-align:center;
+}
+
+.grid-filtros{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:15px;
+}
+
+label{
+    display:block;
+    font-size:10px;
+    color:#888;
+    text-transform:uppercase;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input{
+    background:#111;
+    border:1px solid #444;
+    color:#fff;
+    padding:12px;
+    border-radius:8px;
+    outline:none;
+    width:100%;
+    box-sizing:border-box;
+}
+
+.btn-aplicar{
+    background:var(--primary);
+    color:#000;
+    padding:12px 30px;
+    border:none;
+    border-radius:5px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:20px;
+    text-transform:uppercase;
+}
+
+/* TABELA */
+
+.tabela-container{
+    max-width:1200px;
+    margin:20px auto;
+    padding:0 15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:rgba(20,20,20,.9);
+    border-radius:10px;
+    overflow:hidden;
+}
+
+th{
+    background:#222;
+    color:var(--primary);
+    padding:15px;
+    font-size:12px;
+    text-transform:uppercase;
+    border-bottom:2px solid var(--primary);
+}
+
+td{
+    border-bottom:1px solid #333;
+    padding:18px;
+    text-align:center;
+    font-size:14px;
+}
+
+.col-cliente{
+    text-align:left;
+    padding-left:25px;
+}
+
+.total-ent{
+    color:var(--success);
+    font-weight:bold;
+}
+
+.total-sai{
+    color:var(--danger);
+    font-weight:bold;
+}
+
+.total-saldo{
+    color:var(--blue);
+    font-weight:bold;
+    font-size:18px;
+}
+
+/* PRINT */
+
+@media print{
+
+    @page{
+        size:portrait;
+        margin:10mm;
+    }
+
+    body::after{
+        content:"SETOR ROBÔ  |  Página " counter(page);
+        position:fixed;
+        bottom:6px;
+        right:15px;
+        font-size:10px;
+        color:#777;
+        font-family:'Segoe UI',sans-serif;
+    }
+
+    .marca-dagua-viva{
+        animation:none;
+        top:50%;
+        left:50%;
+        transform:translate(-50%,-50%) rotate(-30deg);
+        color:rgba(0,0,0,.05)!important;
+        font-size:60px;
+    }
+
+    .nav-topo,
+    .container-filtros,
+    .btn-aplicar{
+        display:none!important;
+    }
+
+    body{
+        background:white!important;
+        color:black!important;
+    }
+
+    .banner-setor{
+        background:white!important;
+        border-bottom:2px solid black!important;
+    }
+
+    .banner-setor h1,
+    .banner-setor p{
+        color:black!important;
+        text-shadow:none!important;
+    }
+
+    table{
+        background:white!important;
+        border:1px solid #000;
+        width:100%;
+    }
+
+    th{
+        background:#f2f2f2!important;
+        color:black!important;
+        border:1px solid #000;
+    }
+
+    td{
+        color:black!important;
+        border:1px solid #ccc!important;
+        padding:6px!important;
+        font-size:9px!important;
+    }
+
+    .col-cliente{
+        text-align:left!important;
+        padding-left:8px!important;
+    }
+
+    .col-cliente div{
+        display:flex!important;
+        flex-wrap:wrap!important;
+        gap:6px!important;
+        line-height:1.3!important;
+        font-size:8px!important;
+    }
+
+    .col-cliente span{
+        color:black!important;
+        font-size:8px!important;
+    }
+
+    .col-cliente span span{
+        color:black!important;
+        font-weight:bold!important;
+    }
+
+    .total-ent,
+    .total-sai,
+    .total-saldo{
+        color:black!important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="marca-dagua-viva">
+    D.artcom--Daniel
+</div>
+
+<div class="banner-setor">
+
+    <p>
+        Relatório Consolidado
+    </p>
+
+    <h1>
+        SETOR ROBÔ
+    </h1>
+
+</div>
+
+<nav class="nav-topo">
+
+    <a href="../index.html"
+       class="btn-nav"
+       style="background:var(--blue);">
+        🏠 Início
+    </a>
+
+    <a href="geral.html"
+       class="btn-nav"
+       style="background:#00008b; color:white;">
+        ⬅️ Voltar ao Geral
+    </a>
+
+    <button
+        onclick="atualizarResumo()"
+        class="btn-nav"
+        style="background:var(--success); border:none;"
+    >
+        🔄 Atualizar
+    </button>
+
+    <button
+        onclick="window.print()"
+        class="btn-nav"
+        style="background:var(--blue); border:none;"
+    >
+        🖨️ Imprimir PDF
+    </button>
+
+</nav>
+
+<div class="container-filtros">
+
+    <div class="grid-filtros">
+
+        <div>
+            <label>Data Início:</label>
+            <input type="date" id="resDe">
+        </div>
+
+        <div>
+            <label>Data Fim:</label>
+            <input type="date" id="resAte">
+        </div>
+
+        <div>
+            <label>Código:</label>
+            <input
+                type="text"
+                id="resCod"
+                placeholder="Digite o Código"
+                oninput="gerarResumo()"
+            >
+        </div>
+
+        <div>
+            <label>Nome do Cliente:</label>
+            <input
+                type="text"
+                id="resCli"
+                placeholder="Digite o Cliente"
+                oninput="gerarResumo()"
+            >
+        </div>
+
+    </div>
+
+    <button
+        onclick="atualizarResumo()"
+        class="btn-aplicar"
+    >
+        🔄 Atualizar Saldos
+    </button>
+
+</div>
+
+<div class="tabela-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>CLIENTE / PROJETO</th>
+                <th>PERÍODO DAS OPERAÇÕES</th>
+                <th>ENTRADAS</th>
+                <th>SAÍDAS</th>
+                <th>SALDO EM ESTOQUE</th>
+            </tr>
+
+        </thead>
+
+        <tbody id="corpoResumo"></tbody>
+
+    </table>
+
+</div>
+
+<script>
+
+const API_ENT = "/api/historicoEntrada";
+const API_SAI = "/api/historicoSaida";
+const API_CAD = "/api/produtos";
+
+let cacheEntradas = [];
+let cacheSaidas = [];
+let cacheCadastro = [];
+
+window.onload = async () => {
+
+    const hoje = new Date();
+
+    document.getElementById('resDe').value =
+        new Date(
+            hoje.getFullYear(),
+            hoje.getMonth(),
+            1
+        ).toISOString().split('T')[0];
+
+    document.getElementById('resAte').value =
+        hoje.toISOString().split('T')[0];
+
+    await carregarDadosAPI();
+    gerarResumo();
+};
+
+async function buscarJSON(url) {
+
+    try {
+
+        const resposta = await fetch(url);
+
+        if(!resposta.ok)
+            throw new Error("Erro ao buscar " + url);
+
+        const dados = await resposta.json();
+
+        return Array.isArray(dados) ? dados : [];
+
+    } catch (erro) {
+
+        console.error("Falha na API:", erro);
+
+        return [];
+    }
+}
+
+async function carregarDadosAPI() {
+
+    const [entradas, saidas, cadastro] = await Promise.all([
+        buscarJSON(API_ENT),
+        buscarJSON(API_SAI),
+        buscarJSON(API_CAD)
+    ]);
+
+    cacheEntradas = entradas;
+    cacheSaidas = saidas;
+    cacheCadastro = cadastro;
+}
+
+async function atualizarResumo() {
+
+    await carregarDadosAPI();
+
+    gerarResumo();
+
+    alert("✅ Resumo atualizado!");
+}
+
+function parseData(str) {
+
+    if(!str) return null;
+
+    if(String(str).includes("-"))
+        return new Date(str + "T00:00:00");
+
+    const [d,m,y] = String(str).split('/');
+
+    return new Date(y, m - 1, d);
+}
+
+function gerarResumo() {
+
+    const entradas = cacheEntradas || [];
+    const saidas = cacheSaidas || [];
+    const cadastro = cacheCadastro || [];
+
+    const fDe =
+        document.getElementById('resDe').value;
+
+    const fAte =
+        document.getElementById('resAte').value;
+
+    const fCli =
+        document.getElementById('resCli')
+        .value
+        .toLowerCase();
+
+    const fCod =
+        document.getElementById('resCod')
+        .value
+        .toLowerCase();
+
+    const deObj =
+        fDe ? parseData(fDe) : null;
+
+    const ateObj =
+        fAte ? parseData(fAte) : null;
+
+    let agrupado = {};
+
+    entradas.forEach(e => {
+
+        const dataObj =
+            parseData(e.data);
+
+        if(!dataObj) return;
+
+        if(
+            (deObj && dataObj < deObj) ||
+            (ateObj && dataObj > ateObj)
+        ) return;
+
+        const id =
+            e.produtoID || e.id_vinculo || e.codigo || e.cod;
+
+        if(!id) return;
+
+        if(!agrupado[id]) {
+
+            agrupado[id] = {
+                ent:0,
+                sai:0,
+                dMin:dataObj,
+                dMax:dataObj
+            };
+        }
+
+        agrupado[id].ent += Number(e.qtd || 0);
+
+        if(dataObj < agrupado[id].dMin)
+            agrupado[id].dMin = dataObj;
+
+        if(dataObj > agrupado[id].dMax)
+            agrupado[id].dMax = dataObj;
+    });
+
+    saidas.forEach(s => {
+
+        const dataObj =
+            parseData(s.data);
+
+        if(!dataObj) return;
+
+        if(
+            (deObj && dataObj < deObj) ||
+            (ateObj && dataObj > ateObj)
+        ) return;
+
+        const id =
+            s.produtoID ||
+            s.id_vinculo ||
+            s.cod ||
+            s.codigo;
+
+        if(!id) return;
+
+        if(!agrupado[id]) {
+
+            agrupado[id] = {
+                ent:0,
+                sai:0,
+                dMin:dataObj,
+                dMax:dataObj
+            };
+        }
+
+        agrupado[id].sai += Number(s.qtd || 0);
+
+        if(dataObj < agrupado[id].dMin)
+            agrupado[id].dMin = dataObj;
+
+        if(dataObj > agrupado[id].dMax)
+            agrupado[id].dMax = dataObj;
+    });
+
+    const corpo =
+        document.getElementById('corpoResumo');
+
+    corpo.innerHTML = "";
+
+    for(let id in agrupado){
+
+        const ref =
+
+            cadastro.find(p => String(p.id) == String(id))
+
+            ||
+
+            cadastro.find(p => String(p.codigo) == String(id))
+
+            ||
+
+            cadastro.find(p => String(p.cod) == String(id))
+
+            ||
+
+            {
+                cliente:"NÃO IDENTIFICADO",
+                projeto:"-",
+                codigo:id,
+                produto:"-",
+                medida:"-"
+            };
+
+        if(
+            fCli &&
+            !String(ref.cliente || "")
+            .toLowerCase()
+            .includes(fCli)
+        ) continue;
+
+        if(
+            fCod &&
+            !String(ref.codigo || ref.cod || "")
+            .toLowerCase()
+            .includes(fCod)
+        ) continue;
+
+        const dInic =
+            agrupado[id].dMin.toLocaleDateString('pt-BR');
+
+        const dFim =
+            agrupado[id].dMax.toLocaleDateString('pt-BR');
+
+        const periodo =
+
+            dInic === dFim
+
+            ? dInic
+
+            : `${dInic} à ${dFim}`;
+
+        const tr =
+            document.createElement('tr');
+
+        tr.innerHTML = `
+
+
+<td class="col-cliente">
+
+    <div style="
+        display:flex;
+        flex-wrap:wrap;
+        gap:14px;
+        align-items:center;
+        line-height:1.5;
+        font-size:13px;
+    ">
+
+        <span>
+            <span style="color:var(--primary);font-weight:bold;">CÓDIGO:</span>
+            ${ref.codigo || ref.cod || "-"}
+        </span>
+
+        <span>
+            <span style="color:var(--primary);font-weight:bold;">CLIENTE:</span>
+            ${ref.cliente || "-"}
+        </span>
+
+        <span>
+            <span style="color:var(--primary);font-weight:bold;">PROJETO:</span>
+            ${ref.projeto || "-"}
+        </span>
+
+        <span>
+            <span style="color:var(--primary);font-weight:bold;">PRODUTO:</span>
+            ${ref.produto || "-"}
+        </span>
+
+        <span>
+            <span style="color:var(--primary);font-weight:bold;">MEDIDA:</span>
+            ${ref.medida || "-"}
+        </span>
+
+    </div>
+
+</td>
+
+
+            <td>
+                ${periodo}
+            </td>
+
+            <td class="total-ent">
+                ${agrupado[id].ent}
+            </td>
+
+            <td class="total-sai">
+                ${agrupado[id].sai}
+            </td>
+
+            <td class="total-saldo">
+                ${agrupado[id].ent - agrupado[id].sai}
+            </td>
+        `;
+
+        corpo.appendChild(tr);
+    }
+
+    if(corpo.innerHTML === ""){
+
+        corpo.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    Nenhum dado encontrado para este período.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+</script>
+
+</body>
+</html>

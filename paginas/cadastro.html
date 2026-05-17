@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SETOR ROBÔ - Cadastro</title>
+    <style>
+        :root {
+            --primary: #ff9800;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --success: #2e7d32;
+            --danger: #c62828;
+            --blue: #0277bd;
+            --gray: #555;
+            --text: #e0e0e0;
+        }
+
+        /* --- ESTILO DA MARCA D'ÁGUA MANTIDO --- */
+        @keyframes flutuar {
+            0%   { transform: translate(5vw, 10vh) rotate(0deg); }
+            25%  { transform: translate(70vw, 20vh) rotate(10deg); }
+            50%  { transform: translate(60vw, 70vh) rotate(0deg); }
+            75%  { transform: translate(10vw, 60vh) rotate(-10deg); }
+            100% { transform: translate(5vw, 10vh) rotate(0deg); }
+        }
+
+        .marca-dagua-viva {
+            position: fixed; top: 0; left: 0; font-size: 45px; font-weight: 900;
+            color: rgba(255, 152, 0, 0.15); 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            pointer-events: none; z-index: 1000; animation: flutuar 40s linear infinite;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: #000;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar a {
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .card {
+            max-width: 700px;
+            margin: 30px auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        h2 { text-align: center; color: var(--primary); text-transform: uppercase; }
+
+        label { display: block; margin-top: 15px; font-size: 11px; text-transform: uppercase; color: #888; font-weight: bold; }
+        
+        input {
+            width: 100%; padding: 12px; background: rgba(45, 45, 45, 0.9); border: 1px solid #444;
+            color: white; border-radius: 8px; margin-top: 5px; font-size: 15px; box-sizing: border-box; outline: none;
+        }
+
+        .btn-salvar {
+            width: 100%; padding: 18px; background: var(--success); color: white; border: none;
+            border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 20px;
+        }
+
+        .tabela-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; position: relative; z-index: 10; }
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 10px; overflow: hidden; }
+        th { background: #111; color: var(--primary); padding: 12px; font-size: 11px; text-transform: uppercase; }
+        td { border-bottom: 1px solid #333; padding: 12px; text-align: center; font-size: 13px; }
+        
+        .btn-edit { background: var(--blue); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-right: 5px;}
+        .btn-del { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- MARCA D'ÁGUA ADICIONADA -->
+    <div class="marca-dagua-viva">D.artcom--Daniel</div>
+
+    <nav class="navbar">
+        <a href="../index.html" style="background: var(--blue);">🏠 Início</a>
+        <a href="entrada.html" style="background: var(--success);">📥 Entrada</a>
+        <a href="saida.html" style="background: var(--danger);">📤 Saída</a>
+        <a href="relatorio.html" style="background: #000; border: 1px solid var(--primary); color: var(--primary);">📊 Relatório</a> 
+        <a href="geral.html" style="background:hsl(41, 96%, 48%)"> 📊 Relatório Geral</a>
+    </nav>
+
+    <div class="card">
+        <h2>⚙️ CADASTRO DE ITENS</h2>
+        <input type="hidden" id="editID" value="">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div><label>Código</label><input type="text" id="codigo" placeholder="Ex: 1010"></div>
+            <div><label>Data Cadastro</label><input type="date" id="data"></div>
+        </div>
+
+        <label>Projeto</label><input type="text" id="projeto" placeholder="Ex: 17785/26">
+        <label>Produto</label><input type="text" id="produto" placeholder="Ex: LONG TUB">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div><label>Medida</label><input type="text" id="medida" placeholder="Ex: 2300 X 80"></div>
+            <div><label>Cliente</label><input type="text" id="cliente" placeholder="Ex: GAZOOM"></div>
+        </div>
+
+        <button class="btn-salvar" id="btnAcao" onclick="salvar()">🚀 Salvar no Sistema</button>
+    </div>
+
+    <div class="tabela-container">
+        <table id="minhaTabela">
+            <thead>
+                <tr>
+                    <th>CÓDIGO</th><th>DATA (BR)</th><th>PROJETO</th><th>PRODUTO</th><th>MEDIDA</th><th>CLIENTE</th><th>AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCadastro"></tbody>
+        </table>
+    </div>
+
+<script>
+    const API_PROD = "/api/produtos";
+
+    window.onload = () => {
+        document.getElementById('data').value = new Date().toISOString().split('T')[0];
+        listar();
+    };
+
+    function formatarDataParaBR(dataISO) {
+        if(!dataISO) return "---";
+        const [ano, mes, dia] = dataISO.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    async function carregarProdutos() {
+        try {
+            const resposta = await fetch(API_PROD);
+
+            if(!resposta.ok) {
+                throw new Error("Erro ao carregar produtos");
+            }
+
+            return await resposta.json();
+
+        } catch (erro) {
+            console.error(erro);
+            alert("⚠️ Não foi possível carregar o banco de dados. Verifique se o servidor está ligado.");
+            return [];
+        }
+    }
+
+    async function salvarProdutos(produtos) {
+        try {
+            const resposta = await fetch(API_PROD, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(produtos)
+            });
+
+            if(!resposta.ok) {
+                throw new Error("Erro ao salvar produtos");
+            }
+
+            return true;
+
+        } catch (erro) {
+            console.error(erro);
+            alert("⚠️ Não foi possível salvar no banco de dados. Verifique se o servidor está ligado.");
+            return false;
+        }
+    }
+
+    async function salvar() {
+        const editID = document.getElementById("editID").value;
+        const dataInput = document.getElementById("data").value;
+
+        const item = {
+            id: editID || Date.now().toString(),
+            codigo: document.getElementById("codigo").value.trim().toUpperCase(),
+            dataISO: dataInput,
+            dataBR: formatarDataParaBR(dataInput),
+            projeto: document.getElementById("projeto").value.trim().toUpperCase(),
+            produto: document.getElementById("produto").value.trim().toUpperCase(),
+            medida: document.getElementById("medida").value.trim().toUpperCase(),
+            cliente: document.getElementById("cliente").value.trim().toUpperCase()
+        };
+
+        if(!item.codigo || !item.cliente) {
+            alert("⚠️ Preencha o Código e o Cliente!");
+            return;
+        }
+
+        let produtos = await carregarProdutos();
+
+        if (!editID) {
+            produtos.push(item);
+
+            const salvou = await salvarProdutos(produtos);
+            if(!salvou) return;
+
+            alert("✅ Cadastrado com sucesso!");
+
+        } else {
+            const index = produtos.findIndex(p => p.id === editID);
+
+            if(index !== -1) {
+                produtos[index] = item;
+
+                const salvou = await salvarProdutos(produtos);
+                if(!salvou) return;
+
+                alert("✅ Cadastro atualizado em todo o sistema!");
+            }
+        }
+
+        limparCampos();
+        listar();
+    }
+
+    async function listar() {
+        const produtos = await carregarProdutos();
+        const body = document.getElementById("tabelaCadastro");
+        body.innerHTML = "";
+
+        produtos.forEach(p => {
+            body.innerHTML += `
+                <tr>
+                    <td><b>${p.codigo || ""}</b></td>
+                    <td>${p.dataBR || formatarDataParaBR(p.dataISO) || "---"}</td>
+                    <td>${p.projeto || ""}</td>
+                    <td>${p.produto || ""}</td>
+                    <td>${p.medida || ""}</td>
+                    <td>${p.cliente || ""}</td>
+                    <td>
+                        <button class="btn-edit" onclick="editar('${p.id}')">✏️</button>
+                        <button class="btn-del" onclick="deletar('${p.id}')">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    async function editar(id) {
+        const produtos = await carregarProdutos();
+        const p = produtos.find(item => item.id === id);
+
+        if(p) {
+            document.getElementById("editID").value = p.id;
+            document.getElementById("codigo").value = p.codigo || "";
+            document.getElementById("data").value = p.dataISO || "";
+            document.getElementById("projeto").value = p.projeto || "";
+            document.getElementById("produto").value = p.produto || "";
+            document.getElementById("medida").value = p.medida || "";
+            document.getElementById("cliente").value = p.cliente || "";
+            document.getElementById("btnAcao").innerText = "💾 Atualizar Cadastro";
+            document.getElementById("btnAcao").style.background = "var(--blue)";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    async function deletar(id) {
+        if(confirm("Deseja realmente excluir este item?")) {
+            let produtos = await carregarProdutos();
+
+            produtos = produtos.filter(p => p.id !== id);
+
+            const salvou = await salvarProdutos(produtos);
+            if(!salvou) return;
+
+            listar();
+        }
+    }
+
+    function limparCampos() {
+        document.getElementById("editID").value = "";
+        document.getElementById("codigo").value = "";
+        document.getElementById("projeto").value = "";
+        document.getElementById("produto").value = "";
+        document.getElementById("medida").value = "";
+        document.getElementById("cliente").value = "";
+        document.getElementById("btnAcao").innerText = "🚀 Salvar no Sistema";
+        document.getElementById("btnAcao").style.background = "var(--success)";
+        document.getElementById('data').value = new Date().toISOString().split('T')[0];
+    }
+</script>
+</body>
+</html>
